@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="${subject}">Welcome</title>
+  <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; }
+        .header { color: #2c3e50; }
+        .footer { margin-top: 20px; font-size: 0.8em; color: #7f8c8d; }
+    </style>
+</head>
+<body>
+<div class="header">
+  <h1 th:text="'Hello, ' + ${name} + '!'">Hello, User!</h1>
+</div>
+
+<p>Thank you for registering with our service. Here are your details:</p>
+
+<ul>
+  <li>Username: <span th:text="${username}">username</span></li>
+  <li>Registration Date: <span th:text="${#dates.format(registrationDate, 'dd MMM yyyy')}">date</span></li>
+</ul>
+
+<div class="footer">
+  <p>Best regards,<br>The Team</p>
+</div>
+</body>
+</html>
