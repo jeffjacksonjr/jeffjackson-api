@@ -13,4 +13,5 @@ COPY --from=build /usr/src/app/target/jeffjackson-1.1.jar /usr/app/jeffjackson-1
 
 EXPOSE 5151
 
-CMD ["java", "-jar", "/usr/app/jeffjackson-1.1.jar"]
+# Just point Spring to the secret file directly
+CMD ["java", "-jar", "/usr/app/jeffjackson-1.1.jar", "--spring.config.location=file:/etc/secrets/.env"]
