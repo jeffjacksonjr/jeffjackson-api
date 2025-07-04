@@ -1,4 +1,4 @@
-package com.jeffjackson.pdfUpload.service.response;
+package com.jeffjackson.pdfUpload.response;
 
 import java.util.Date;
 

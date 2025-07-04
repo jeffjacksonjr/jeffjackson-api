@@ -1,8 +1,8 @@
-package com.jeffjackson.pdfUpload.service.controller;
+package com.jeffjackson.pdfUpload.controller;
 
 import com.jeffjackson.model.MessageModel;
 import com.jeffjackson.pdfUpload.service.FileStorageService;
-import com.jeffjackson.pdfUpload.service.response.FileUploadResponse;
+import com.jeffjackson.pdfUpload.response.FileUploadResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

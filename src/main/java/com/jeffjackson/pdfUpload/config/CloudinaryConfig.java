@@ -1,4 +1,4 @@
-package com.jeffjackson.pdfUpload.service.config;
+package com.jeffjackson.pdfUpload.config;
 
 import com.cloudinary.Cloudinary;
 import org.springframework.beans.factory.annotation.Value;
