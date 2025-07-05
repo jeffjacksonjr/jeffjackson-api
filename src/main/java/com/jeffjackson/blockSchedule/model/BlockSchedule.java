@@ -10,15 +10,24 @@ public class BlockSchedule {
     private String date;
     private String time;
     private String reason;
+    private String type;
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public BlockSchedule() {
     }
 
-    public BlockSchedule(String id, String date, String time, String reason) {
+    public BlockSchedule(String id, String date, String time, String reason, String type) {
         this.id = id;
         this.date = date;
         this.time = time;
         this.reason = reason;
+        this.type = type;
     }
 
     public String getId() {

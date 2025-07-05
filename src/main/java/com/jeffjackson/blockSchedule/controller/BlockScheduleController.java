@@ -17,7 +17,7 @@ public class BlockScheduleController {
 
     @PostMapping("/api/blockSchedule")
     public ResponseEntity<Object> submitBlockSchedule(@RequestBody BlockSchedule blockSchedule){
-        if (blockSchedule == null || blockSchedule.getDate() == null || blockSchedule.getTime() == null) {
+        if (blockSchedule == null || blockSchedule.getDate() == null || blockSchedule.getTime() == null || blockSchedule.getType() == null) {
             MessageModel errorMessageModel = new MessageModel("Failed", "Invalid block schedule data");
             return ResponseEntity.status(HttpStatus.OK).body(errorMessageModel);
         }
