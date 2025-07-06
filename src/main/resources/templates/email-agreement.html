@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agreement Document</title>
+  <style type="text/css">
+    /* Base Styles */
+    body, html {
+      margin: 0;
+      padding: 0;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      line-height: 1.6;
+      color: #333333;
+      background-color: #f7f7f7;
+    }
+
+    /* Email Container */
+    .email-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    /* Header */
+    .email-header {
+      background-color: #2c3e50;
+      padding: 30px 40px;
+      color: white;
+      text-align: center;
+    }
+
+    .email-header h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 500;
+    }
+
+    /* Content */
+    .email-content {
+      padding: 40px;
+    }
+
+    .greeting {
+      font-size: 16px;
+      margin-bottom: 25px;
+    }
+
+    .message {
+      font-size: 15px;
+      margin-bottom: 20px;
+      color: #555555;
+    }
+
+    /* Button */
+    .button-container {
+      margin: 30px 0;
+      text-align: center;
+    }
+
+    .button {
+      display: inline-block;
+      padding: 12px 30px;
+      background-color: #3498db;
+      color: white !important;
+      text-decoration: none;
+      border-radius: 4px;
+      font-weight: 500;
+      font-size: 15px;
+    }
+
+    /* Footer */
+    .email-footer {
+      padding: 25px 40px;
+      background-color: #f5f5f5;
+      color: #777777;
+      font-size: 13px;
+      border-top: 1px solid #eeeeee;
+    }
+
+    .signature {
+      margin-bottom: 15px;
+      font-style: italic;
+    }
+
+    .contact-info {
+      margin-top: 15px;
+      font-size: 12px;
+    }
+
+    .reference {
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 1px solid #eeeeee;
+      font-size: 12px;
+      color: #999999;
+    }
+  </style>
+</head>
+<body>
+<div class="email-container">
+  <div class="email-header">
+    <h1>Agreement Document</h1>
+  </div>
+
+  <div class="email-content">
+    <p class="greeting" th:text="'Dear ' + ${clientName} + ','">Dear Client,</p>
+
+    <p class="message">Thank you for your business. Please find your agreement document attached to this email.</p>
+
+    <!-- Download Section -->
+    <div class="button-container">
+      <a th:href="${agreementUrl}" class="button">Download Agreement</a>
+    </div>
+
+    <!-- Upload Instructions Section -->
+    <div class="instruction-box">
+      <h3 class="section-title">Next Steps:</h3>
+      <p>1. Please sign the agreement</p>
+      <p>2. Upload the signed document here:
+        <a th:href="${uploadLink}" style="color: #3498db;">Upload Signed Agreement</a>
+      </p>
+      <p class="important-note">Important: Do not change the file name when uploading.</p>
+    </div>
+
+    <!-- Payment Section -->
+    <div class="instruction-box">
+      <h3 class="section-title">Payment Instructions:</h3>
+      <p>Please complete your payment as discussed using the link below:</p>
+      <div class="button-container" style="margin: 15px 0;">
+        <a th:href="${paymentLink}" class="button payment-button">Make Payment</a>
+      </div>
+      <p>Payment is required to process your agreement.</p>
+    </div>
+
+    <p class="message">Should you have any questions or require further assistance, please don't hesitate to contact us.</p>
+
+    <p class="message">We appreciate the opportunity to serve you.</p>
+  </div>
+
+  <div class="email-footer">
+    <div class="signature">
+      <p>Best regards,</p>
+      <p><strong>Jeff Jackson</strong></p>
+    </div>
+
+    <div class="contact-info">
+      <p>Email: jeff.jackson@example.com</p>
+      <p>Mobile: +1 (240) 388-7358</p>
+    </div>
+
+    <div class="reference">
+      <p th:text="'Reference ID: ' + ${enquiryId}"></p>
+    </div>
+  </div>
+</div>
+</body>
+</html>
