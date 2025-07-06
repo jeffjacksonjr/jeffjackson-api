@@ -5,6 +5,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.FieldType;
 
+import java.time.LocalDateTime;
+
 @Document(collection = "enquiries")
 public class Enquiry {
     @Id
@@ -29,6 +31,23 @@ public class Enquiry {
     private String totalAmount;
     private String remainingAmount;
     private String agreementUrl;
+    private LocalDateTime createdAt;
+    private String key;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
 
     // Getters and Setters
     public String getUniqueId() {

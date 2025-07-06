@@ -1,5 +1,7 @@
 package com.jeffjackson.enquiry.service;
 
+import com.jeffjackson.blockSchedule.model.BlockSchedule;
+import com.jeffjackson.blockSchedule.service.BlockScheduleService;
 import com.jeffjackson.enquiry.model.Enquiry;
 import com.jeffjackson.enquiry.model.EnquiryStatus;
 import com.jeffjackson.enquiry.model.PaginatedResponse;
@@ -13,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -30,6 +33,9 @@ public class EnquiryService {
             .withLocale(Locale.US); // For AM/PM formatting
     @Autowired
     private EnquiryRepository enquiryRepository;
+
+    @Autowired
+    private BlockScheduleService blockScheduleService;
 
     public void createEnquiry(EnquiryRequest request) throws Exception {
         Enquiry enquiry = new Enquiry();
@@ -52,6 +58,24 @@ public class EnquiryService {
                             " (e.g., 5:00 PM)");
         }
 
+        //Set creation timestamp
+        enquiry.setCreatedAt(LocalDateTime.now());
+
+        //Generate a unique Key which we will use for validation if it exists we will not save it in DB
+        String key = request.getEventDate().replace("-", "")
+                + request.getEventTime().replace(":", "").replace(" ", "")
+                + request.getEmail().split("@")[0];
+
+        //Find by Key in Database
+        Enquiry result = enquiryRepository.findByKey(key.toUpperCase());
+        if (result != null) {
+            throw new IllegalArgumentException("Enquiry with the same key already exists.");
+        }
+        try{
+            enquiry.setKey(key.toUpperCase());
+        }catch (Exception e) {
+            throw new IllegalArgumentException("Invalid key format. Please check the input data.");
+        }
         // Generate unique ID with EQ prefix
         String uniqueId = "EQ" + UUID.randomUUID().toString().substring(0, 6).toUpperCase();
         enquiry.setUniqueId(uniqueId);
@@ -76,30 +100,42 @@ public class EnquiryService {
         enquiry.setAgreementUrl(request.getAgreementUrl());
 
         // Save to MongoDB
-        enquiryRepository.save(enquiry);
+        try{
+            BlockSchedule blockSchedule = new BlockSchedule();
+            blockSchedule.setType("SYSTEM");
+            blockSchedule.setDate(enquiry.getEventDate());
+            blockSchedule.setTime(enquiry.getEventTime());
+            blockSchedule.setReason("Enquiry Booked with "+ enquiry.getUniqueId());
+            String blockKey = blockSchedule.getDate().replace("-", "") + blockSchedule.getTime().replace(":", "").replace(" ", "");
+            blockSchedule.setId(blockKey);
+            blockScheduleService.save(blockSchedule);
+            enquiryRepository.save(enquiry);
+        }catch (Exception e){
+            throw new Exception("Error saving enquiry. Please try again.");
+        }
     }
 
     public PaginatedResponse<EnquiryResponse> getPaginatedEnquiries(int page, int size) {
-        // 1. Create page request
+        // Create page request
         Pageable pageable = PageRequest.of(page, size);
 
-        // 2. Fetch paginated data from repository
+        // Fetch paginated data from repository
         Page<Enquiry> enquiryPage = enquiryRepository.findAll(pageable);
 
-        // 3. Convert Enquiry entities to EnquiryResponse DTOs
+        // Convert Enquiry entities to EnquiryResponse DTOs
         List<EnquiryResponse> content = enquiryPage.getContent()
                 .stream()
                 .map(this::convertToPageResponse)
                 .collect(Collectors.toList());
 
-        // 4. Create new page with converted content
+        // Create new page with converted content
         Page<EnquiryResponse> responsePage = new PageImpl<>(
                 content,
                 pageable,
                 enquiryPage.getTotalElements()
         );
 
-        // 5. Return paginated response
+        // Return paginated response
         return new PaginatedResponse<>(responsePage);
     }
 
@@ -122,7 +158,8 @@ public class EnquiryService {
                 enquiry.getDepositReceived(),
                 enquiry.getTotalAmount(),
                 enquiry.getRemainingAmount(),
-                enquiry.getAgreementUrl()
+                enquiry.getAgreementUrl(),
+                enquiry.getCreatedAt()
         );
 }
 }

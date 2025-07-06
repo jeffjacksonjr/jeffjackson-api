@@ -25,11 +25,11 @@ public class EnquiryController {
             return ResponseEntity.status(HttpStatus.OK).body(messageModel);
         }catch (IllegalArgumentException e) {
             e.printStackTrace();
-            MessageModel messageModel = new MessageModel("Fail", "Date Time Parse error, Please correct date and time.");
+            MessageModel messageModel = new MessageModel("Fail", e.getMessage());
             return ResponseEntity.status(HttpStatus.OK).body(messageModel);
         } catch(Exception e){
             e.printStackTrace();
-            MessageModel messageModel = new MessageModel("Fail", "Enquiry creation Failed, Please try again.");
+            MessageModel messageModel = new MessageModel("Fail", e.getMessage());
             return ResponseEntity.status(HttpStatus.OK).body(messageModel);
         }
     }

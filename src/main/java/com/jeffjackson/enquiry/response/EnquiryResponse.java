@@ -1,5 +1,7 @@
 package com.jeffjackson.enquiry.response;
 
+import java.time.LocalDateTime;
+
 public class EnquiryResponse {
     private String uniqueId;
     private String clientName;
@@ -19,6 +21,7 @@ public class EnquiryResponse {
     private String totalAmount;
     private String remainingAmount;
     private String agreementUrl;
+    private LocalDateTime createdAt;
 
     //Constructors
     public EnquiryResponse() {
@@ -28,7 +31,7 @@ public class EnquiryResponse {
                            String eventDate, String eventTime, String street,
                            String apt, String city, String state, String message,
                            String status, String depositReceived, String totalAmount,
-                           String remainingAmount, String agreementUrl) {
+                           String remainingAmount, String agreementUrl, LocalDateTime createdAt) {
         this.uniqueId = uniqueId;
         this.clientName = clientName;
         this.email = email;
@@ -47,6 +50,7 @@ public class EnquiryResponse {
         this.totalAmount = totalAmount;
         this.remainingAmount = remainingAmount;
         this.agreementUrl = agreementUrl;
+        this.createdAt = createdAt;
     }
 
     // Getters and Setters
@@ -192,5 +196,13 @@ public class EnquiryResponse {
 
     public void setAgreementUrl(String agreementUrl) {
         this.agreementUrl = agreementUrl;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }
