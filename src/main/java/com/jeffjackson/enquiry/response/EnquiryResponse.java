@@ -11,10 +11,7 @@ public class EnquiryResponse {
     private String type;
     private String  eventDate;
     private String eventTime;
-    private String street;
-    private String apt;
-    private String city;
-    private String state;
+    private String address;
     private String message;
     private String status;
     private String depositReceived;
@@ -26,12 +23,8 @@ public class EnquiryResponse {
     //Constructors
     public EnquiryResponse() {
     }
-    public EnquiryResponse(String uniqueId, String clientName, String email,
-                           String phone, String eventType, String type,
-                           String eventDate, String eventTime, String street,
-                           String apt, String city, String state, String message,
-                           String status, String depositReceived, String totalAmount,
-                           String remainingAmount, String agreementUrl, LocalDateTime createdAt) {
+
+    public EnquiryResponse(String uniqueId, String clientName, String email, String phone, String eventType, String type, String eventDate, String eventTime, String address, String message, String status, String depositReceived, String totalAmount, String remainingAmount, String agreementUrl, LocalDateTime createdAt) {
         this.uniqueId = uniqueId;
         this.clientName = clientName;
         this.email = email;
@@ -40,10 +33,7 @@ public class EnquiryResponse {
         this.type = type;
         this.eventDate = eventDate;
         this.eventTime = eventTime;
-        this.street = street;
-        this.apt = apt;
-        this.city = city;
-        this.state = state;
+        this.address = address;
         this.message = message;
         this.status = status;
         this.depositReceived = depositReceived;
@@ -118,36 +108,12 @@ public class EnquiryResponse {
         this.eventTime = eventTime;
     }
 
-    public String getStreet() {
-        return street;
+    public String getAddress() {
+        return address;
     }
 
-    public void setStreet(String street) {
-        this.street = street;
-    }
-
-    public String getApt() {
-        return apt;
-    }
-
-    public void setApt(String apt) {
-        this.apt = apt;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getMessage() {

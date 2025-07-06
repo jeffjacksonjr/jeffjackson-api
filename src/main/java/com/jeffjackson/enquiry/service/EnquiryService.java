@@ -88,10 +88,7 @@ public class EnquiryService {
         enquiry.setType(request.getType());
         enquiry.setEventDate(request.getEventDate());
         enquiry.setEventTime(request.getEventTime());
-        enquiry.setStreet(request.getStreet());
-        enquiry.setApt(request.getApt());
-        enquiry.setCity(request.getCity());
-        enquiry.setState(request.getState());
+        enquiry.setAddress(request.getAddress());
         enquiry.setMessage(request.getMessage());
         enquiry.setStatus(EnquiryStatus.OPENED);
         enquiry.setDepositReceived(request.getDepositReceived());
@@ -149,10 +146,7 @@ public class EnquiryService {
                 enquiry.getType(),
                 enquiry.getEventDate(),
                 enquiry.getEventTime(),
-                enquiry.getStreet(),
-                enquiry.getApt(),
-                enquiry.getCity(),
-                enquiry.getState(),
+                enquiry.getAddress(),
                 enquiry.getMessage(),
                 enquiry.getStatus().name(),
                 enquiry.getDepositReceived(),

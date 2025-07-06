@@ -1,6 +1,8 @@
 package com.jeffjackson.agreement.controller;
 
 import com.jeffjackson.agreement.model.AgreementRequest;
+import com.jeffjackson.agreement.model.ViewAgreementRequest;
+import com.jeffjackson.agreement.model.ViewAgreementResponse;
 import com.jeffjackson.enquiry.model.Enquiry;
 import com.jeffjackson.enquiry.service.EnquiryRepository;
 import com.jeffjackson.model.MessageModel;
@@ -11,9 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
@@ -80,5 +80,41 @@ public class AgreementController {
         }
 
         return ResponseEntity.ok(new MessageModel("Success", "Agreement sent successfully"));
+    }
+
+    @GetMapping("/api/viewAgreement")
+    public ResponseEntity<?> viewAgreement(@RequestBody ViewAgreementRequest request){
+        if(null == request || null == request.getEmail() || null == request.getUniqueId()){
+            MessageModel messageModel = new MessageModel("Fail", "Invalid request sent");
+            return ResponseEntity.status(HttpStatus.OK).body(messageModel);
+        }
+        try {
+            Optional<Enquiry> data;
+            if(!request.getUniqueId().isEmpty() && !request.getEmail().isEmpty()){
+                data = Optional.ofNullable(enquiryRepository.findByEmailAndUniqueId(request.getEmail(), request.getUniqueId()));
+            }else{
+                data = enquiryRepository.findById(request.getUniqueId());
+            }
+            if(data.isPresent()){
+                ViewAgreementResponse response = new ViewAgreementResponse();
+                response.setUniqueId(data.get().getUniqueId());
+                response.setClientName(data.get().getClientName());
+                response.setClientEmail(data.get().getEmail());
+                response.setPhone(data.get().getPhone());
+                response.setEventType(data.get().getEventType());
+                response.setEventDateTime(data.get().getEventDate() + data.get().getEventTime());
+                response.setAddress(data.get().getAddress());
+                response.setAgreementUrl(data.get().getAgreementUrl());
+                return ResponseEntity.status(HttpStatus.OK).body(response);
+
+            }else {
+                MessageModel messageModel = new MessageModel("Fail", "No record found");
+                return ResponseEntity.status(HttpStatus.OK).body(messageModel);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            MessageModel messageModel = new MessageModel("Fail", e.getMessage());
+            return ResponseEntity.status(HttpStatus.OK).body(messageModel);
+        }
     }
 }

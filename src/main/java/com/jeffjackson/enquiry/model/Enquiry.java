@@ -21,10 +21,7 @@ public class Enquiry {
 
     @Field(targetType = FieldType.STRING)
     private String eventTime;
-    private String street;
-    private String apt;
-    private String city;
-    private String state;
+    private String address;
     private String message;
     private EnquiryStatus status;
     private String depositReceived;
@@ -114,36 +111,12 @@ public class Enquiry {
         this.eventTime = eventTime;
     }
 
-    public String getStreet() {
-        return street;
+    public String getAddress() {
+        return address;
     }
 
-    public void setStreet(String street) {
-        this.street = street;
-    }
-
-    public String getApt() {
-        return apt;
-    }
-
-    public void setApt(String apt) {
-        this.apt = apt;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getMessage() {
