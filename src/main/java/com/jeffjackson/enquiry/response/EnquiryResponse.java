@@ -20,6 +20,35 @@ public class EnquiryResponse {
     private String remainingAmount;
     private String agreementUrl;
 
+    //Constructors
+    public EnquiryResponse() {
+    }
+    public EnquiryResponse(String uniqueId, String clientName, String email,
+                           String phone, String eventType, String type,
+                           String eventDate, String eventTime, String street,
+                           String apt, String city, String state, String message,
+                           String status, String depositReceived, String totalAmount,
+                           String remainingAmount, String agreementUrl) {
+        this.uniqueId = uniqueId;
+        this.clientName = clientName;
+        this.email = email;
+        this.phone = phone;
+        this.eventType = eventType;
+        this.type = type;
+        this.eventDate = eventDate;
+        this.eventTime = eventTime;
+        this.street = street;
+        this.apt = apt;
+        this.city = city;
+        this.state = state;
+        this.message = message;
+        this.status = status;
+        this.depositReceived = depositReceived;
+        this.totalAmount = totalAmount;
+        this.remainingAmount = remainingAmount;
+        this.agreementUrl = agreementUrl;
+    }
+
     // Getters and Setters
     public String getUniqueId() {
         return uniqueId;
