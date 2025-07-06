@@ -41,4 +41,16 @@ public class EnquiryController {
         PaginatedResponse<EnquiryResponse> response = enquiryService.getPaginatedEnquiries(page, size);
         return ResponseEntity.ok(response);
     }
+    @PatchMapping
+    public ResponseEntity<?> updateEnquiryStatus(@RequestBody EnquiryResponse enquiryResponse) {
+        try {
+            enquiryService.updateEnquiryStatus(enquiryResponse.getUniqueId(), enquiryResponse.getStatus());
+            MessageModel messageModel = new MessageModel("Success", "Enquiry status updated successfully");
+            return ResponseEntity.status(HttpStatus.OK).body(messageModel);
+        } catch (Exception e) {
+            e.printStackTrace();
+            MessageModel messageModel = new MessageModel("Fail", e.getMessage());
+            return ResponseEntity.status(HttpStatus.OK).body(messageModel);
+        }
+    }
 }

@@ -156,4 +156,19 @@ public class EnquiryService {
                 enquiry.getCreatedAt()
         );
 }
+
+    public void updateEnquiryStatus(String uniqueId, String status) throws Exception{
+        try {
+            enquiryRepository.findById(uniqueId)
+                    .ifPresent(enquiry -> {
+                        if(enquiry.getStatus().equals(EnquiryStatus.valueOf(status.toUpperCase()))){
+                            throw new IllegalArgumentException("Enquiry is already in the requested status.");
+                        }
+                        enquiry.setStatus(EnquiryStatus.valueOf(status.toUpperCase()));
+                        enquiryRepository.save(enquiry);
+                    });
+        }catch (Exception e){
+            throw new Exception("Error updating enquiry status. Please try again.");
+        }
+    }
 }
