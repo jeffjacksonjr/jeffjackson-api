@@ -6,6 +6,7 @@ import com.jeffjackson.enquiry.model.Enquiry;
 import com.jeffjackson.enquiry.model.EnquiryStatus;
 import com.jeffjackson.enquiry.model.PaginatedResponse;
 import com.jeffjackson.enquiry.request.EnquiryRequest;
+import com.jeffjackson.enquiry.request.EnquiryUpdateRequest;
 import com.jeffjackson.enquiry.response.EnquiryResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -157,18 +159,88 @@ public class EnquiryService {
         );
 }
 
-    public void updateEnquiryStatus(String uniqueId, String status) throws Exception{
+    public void updateEnquiryFinancials(EnquiryUpdateRequest updateRequest) {
+        // Validate request
+        if (updateRequest.getUniqueId() == null || updateRequest.getUniqueId().isEmpty()) {
+            throw new IllegalArgumentException("UniqueId is required");
+        }
+
+        if (!"enquiry".equalsIgnoreCase(updateRequest.getType())) {
+            throw new IllegalArgumentException("Only enquiry type is supported");
+        }
+
+        // Get the enquiry from DB
+        Enquiry enquiry = enquiryRepository.findById(updateRequest.getUniqueId())
+                .orElseThrow(() -> new IllegalArgumentException("No record found in DB with this uniqueId"));
+
+        // Update fields if they are present in request
+        if (updateRequest.getStatus() != null) {
+            updateStatus(enquiry, updateRequest.getStatus());
+        }
+
+        if (updateRequest.getTotalAmount() != null) {
+            updateTotalAmount(enquiry, updateRequest.getTotalAmount());
+        }
+
+        if (updateRequest.getDepositReceived() != null) {
+            updateDepositReceived(enquiry, updateRequest.getDepositReceived());
+        }
+
+        enquiryRepository.save(enquiry);
+    }
+
+    private void updateStatus(Enquiry enquiry, String status) {
         try {
-            enquiryRepository.findById(uniqueId)
-                    .ifPresent(enquiry -> {
-                        if(enquiry.getStatus().equals(EnquiryStatus.valueOf(status.toUpperCase()))){
-                            throw new IllegalArgumentException("Enquiry is already in the requested status.");
-                        }
-                        enquiry.setStatus(EnquiryStatus.valueOf(status.toUpperCase()));
-                        enquiryRepository.save(enquiry);
-                    });
-        }catch (Exception e){
-            throw new Exception("Error updating enquiry status. Please try again.");
+            EnquiryStatus newStatus = EnquiryStatus.valueOf(status.toUpperCase());
+            if (enquiry.getStatus().equals(newStatus)) {
+                throw new IllegalArgumentException("Enquiry is already in the requested status");
+            }
+            enquiry.setStatus(newStatus);
+        } catch (IllegalArgumentException e) {
+            if(null != e.getMessage()){
+                throw new IllegalArgumentException(e.getMessage());
+            }
+            throw new IllegalArgumentException("Invalid status value");
         }
     }
+
+    private void updateTotalAmount(Enquiry enquiry, String amountStr) {
+        try {
+            BigDecimal totalAmount = new BigDecimal(amountStr);
+            if (totalAmount.compareTo(BigDecimal.ZERO) < 0) {
+                throw new IllegalArgumentException("Total amount cannot be negative");
+            }
+
+            enquiry.setTotalAmount(totalAmount.toString());
+            // Recalculate remaining amount if deposit was already received
+            if (!"0".equals(enquiry.getDepositReceived())) {
+                BigDecimal deposit = new BigDecimal(enquiry.getDepositReceived());
+                BigDecimal remaining = totalAmount.subtract(deposit);
+                enquiry.setRemainingAmount(remaining.compareTo(BigDecimal.ZERO) > 0 ? remaining.toString() : "0");
+            }
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Total amount must be a valid number");
+        }
+    }
+
+    private void updateDepositReceived(Enquiry enquiry, String amountStr) {
+        try {
+            BigDecimal deposit = new BigDecimal(amountStr);
+            if (deposit.compareTo(BigDecimal.ZERO) < 0) {
+                throw new IllegalArgumentException("Deposit cannot be negative");
+            }
+
+            BigDecimal totalAmount = new BigDecimal(enquiry.getTotalAmount());
+            if (deposit.compareTo(totalAmount) > 0) {
+                throw new IllegalArgumentException("Deposit cannot be greater than total amount");
+            }
+
+            enquiry.setDepositReceived(deposit.toString());
+            BigDecimal remaining = totalAmount.subtract(deposit);
+            enquiry.setRemainingAmount(remaining.compareTo(BigDecimal.ZERO) > 0 ? remaining.toString() : "0");
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Deposit must be a valid number");
+        }
+    }
+
 }

@@ -2,6 +2,7 @@ package com.jeffjackson.enquiry.controller;
 
 import com.jeffjackson.enquiry.model.PaginatedResponse;
 import com.jeffjackson.enquiry.request.EnquiryRequest;
+import com.jeffjackson.enquiry.request.EnquiryUpdateRequest;
 import com.jeffjackson.enquiry.response.EnquiryResponse;
 import com.jeffjackson.enquiry.service.EnquiryService;
 import com.jeffjackson.model.MessageModel;
@@ -42,13 +43,12 @@ public class EnquiryController {
         return ResponseEntity.ok(response);
     }
     @PatchMapping
-    public ResponseEntity<?> updateEnquiryStatus(@RequestBody EnquiryResponse enquiryResponse) {
+    public ResponseEntity<?> updateEnquiryFinancials(@RequestBody EnquiryUpdateRequest updateRequest) {
         try {
-            enquiryService.updateEnquiryStatus(enquiryResponse.getUniqueId(), enquiryResponse.getStatus());
-            MessageModel messageModel = new MessageModel("Success", "Enquiry status updated successfully");
+            enquiryService.updateEnquiryFinancials(updateRequest);
+            MessageModel messageModel = new MessageModel("Success", "Enquiry updated successfully");
             return ResponseEntity.status(HttpStatus.OK).body(messageModel);
         } catch (Exception e) {
-            e.printStackTrace();
             MessageModel messageModel = new MessageModel("Fail", e.getMessage());
             return ResponseEntity.status(HttpStatus.OK).body(messageModel);
         }
