@@ -4,6 +4,7 @@ package com.jeffjackson.security.controller;
 import com.jeffjackson.security.request.AuthRequest;
 import com.jeffjackson.security.response.AuthResponse;
 import com.jeffjackson.security.service.JwtService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,6 +18,9 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
+
+    @Value("${jwt.expiration}")
+    private long jwtExpiration;
 
     public AuthController(AuthenticationManager authenticationManager, JwtService jwtService, UserDetailsService userDetailsService) {
         this.authenticationManager = authenticationManager;
@@ -34,6 +38,6 @@ public class AuthController {
         );
         UserDetails user = userDetailsService.loadUserByUsername(request.email());
         String jwtToken = jwtService.generateToken(user);
-        return ResponseEntity.ok(new AuthResponse(jwtToken));
+        return ResponseEntity.ok(new AuthResponse(jwtToken, String.valueOf(jwtExpiration)));
     }
 }
