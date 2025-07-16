@@ -1,13 +1,18 @@
 package com.jeffjackson.controller;
 
+import com.jeffjackson.model.LoginResponse;
 import com.jeffjackson.model.MessageModel;
 import com.jeffjackson.request.LoginRequest;
 import com.jeffjackson.request.User;
+import com.jeffjackson.security.service.JwtService;
 import com.jeffjackson.service.EmailService;
 import com.jeffjackson.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,6 +29,13 @@ public class LoginController {
     private final EmailService emailService;
     @Autowired
     private LoginService loginService;
+    @Autowired
+    private JwtService jwtService;
+    @Autowired
+    private UserDetailsService userDetailsService;
+
+    @Value("${jwt.clientId}")
+    private String clientId;
 
     public LoginController(EmailService emailService, LoginService loginService) {
         this.emailService = emailService;
@@ -56,8 +68,10 @@ public class LoginController {
         }
         if(data.isPresent()){
             if(data.get().getUsername().equals(loginRequest.getUsername()) && data.get().getPassword().equals(loginRequest.getPassword())){
-                MessageModel messageModel = new MessageModel("Success", "Login Successful!");
-                return ResponseEntity.status(HttpStatus.OK).body(messageModel);
+                UserDetails user = userDetailsService.loadUserByUsername(clientId);
+                String token = jwtService.generateToken(user);
+                LoginResponse loginResponse = new LoginResponse("Success", "Login Successful!", token);
+                return ResponseEntity.status(HttpStatus.OK).body(loginResponse);
             }
         }
         MessageModel messageModel = new MessageModel("Fail", "Please enter correct username and password !");
