@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -18,7 +19,7 @@ public class BlockScheduleController {
     @PostMapping("/api/blockSchedule")
     public ResponseEntity<Object> submitBlockSchedule(@RequestBody BlockSchedule blockSchedule){
         if (blockSchedule == null || blockSchedule.getDate() == null || blockSchedule.getTime() == null || blockSchedule.getType() == null) {
-            MessageModel errorMessageModel = new MessageModel("Failed", "Invalid block schedule data");
+            MessageModel errorMessageModel = new MessageModel("Fail", "Invalid block schedule data");
             return ResponseEntity.status(HttpStatus.OK).body(errorMessageModel);
         }
         String uniqueId = blockSchedule.getDate().replace("-", "") + blockSchedule.getTime().replace(":", "").replace(" ", "");
@@ -27,7 +28,7 @@ public class BlockScheduleController {
             blockScheduleService.save(blockSchedule);
         }catch (Exception e){
             e.printStackTrace();
-            MessageModel messageModel = new MessageModel("Failed", "Error saving block schedule");
+            MessageModel messageModel = new MessageModel("Fail", "Error saving block schedule");
             return ResponseEntity.status(HttpStatus.OK).body(messageModel);
         }
         MessageModel successMessageModel = new MessageModel("Success", "Schedule Saved Successfully");
@@ -41,7 +42,7 @@ public class BlockScheduleController {
             boolean exists = blockScheduleService.existsById(uniqueId);
 
             if (!exists) {
-                MessageModel errorMessage = new MessageModel("Failed", "Schedule not found with ID: " + uniqueId);
+                MessageModel errorMessage = new MessageModel("Fail", "Schedule not found with ID: " + uniqueId);
                 return ResponseEntity.status(HttpStatus.OK).body(errorMessage);
             }
 
@@ -51,8 +52,13 @@ public class BlockScheduleController {
 
         } catch (Exception e) {
             e.printStackTrace();
-            MessageModel errorMessage = new MessageModel("Failed", "Error deleting schedule: " + e.getMessage());
+            MessageModel errorMessage = new MessageModel("Fail", "Error deleting schedule: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.OK).body(errorMessage);
         }
+    }
+    @GetMapping("/api/blockSchedule")
+    public ResponseEntity<List<BlockSchedule>> findAllBlockSchedule(){
+        List<BlockSchedule> data = this.blockScheduleService.findAll();
+        return ResponseEntity.status(HttpStatus.OK).body(data);
     }
 }
