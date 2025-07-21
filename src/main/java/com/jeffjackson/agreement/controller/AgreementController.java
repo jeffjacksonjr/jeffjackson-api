@@ -82,15 +82,15 @@ public class AgreementController {
         return ResponseEntity.ok(new MessageModel("Success", "Agreement sent successfully"));
     }
 
-    @GetMapping("/api/viewAgreement")
+    @PostMapping("/api/viewAgreement")
     public ResponseEntity<?> viewAgreement(@RequestBody ViewAgreementRequest request){
-        if(null == request || null == request.getEmail() || null == request.getUniqueId()){
+        if(null == request || (null == request.getEmail() && null == request.getUniqueId())){
             MessageModel messageModel = new MessageModel("Fail", "Invalid request sent");
             return ResponseEntity.status(HttpStatus.OK).body(messageModel);
         }
         try {
             Optional<Enquiry> data;
-            if(!request.getUniqueId().isEmpty() && !request.getEmail().isEmpty()){
+            if(null != request.getEmail() && null != request.getUniqueId() && !request.getUniqueId().isEmpty() && !request.getEmail().isEmpty()){
                 data = Optional.ofNullable(enquiryRepository.findByEmailAndUniqueId(request.getEmail(), request.getUniqueId()));
             }else{
                 data = enquiryRepository.findById(request.getUniqueId());

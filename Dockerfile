@@ -41,8 +41,8 @@ RUN mvn -f /usr/src/app/pom.xml clean package
 
 FROM openjdk:17
 
-COPY --from=build /usr/src/app/target/jeffjackson-1.4.jar /usr/app/jeffjackson-1.4.jar
+COPY --from=build /usr/src/app/target/jeffjackson-1.5.jar /usr/app/jeffjackson-1.5.jar
 
 EXPOSE 5151
 
-CMD ["java", "-jar", "/usr/app/jeffjackson-1.4.jar"]
+CMD ["java", "-jar", "/usr/app/jeffjackson-1.5.jar"]
