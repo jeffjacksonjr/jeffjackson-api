@@ -2,12 +2,14 @@ package com.jeffjackson.enquiry.service;
 
 import com.jeffjackson.blockSchedule.model.BlockSchedule;
 import com.jeffjackson.blockSchedule.service.BlockScheduleService;
+import com.jeffjackson.enquiry.model.DiscussionRequestRecord;
 import com.jeffjackson.enquiry.model.Enquiry;
 import com.jeffjackson.enquiry.model.EnquiryStatus;
 import com.jeffjackson.enquiry.model.PaginatedResponse;
 import com.jeffjackson.enquiry.request.EnquiryRequest;
 import com.jeffjackson.enquiry.request.EnquiryUpdateRequest;
 import com.jeffjackson.enquiry.response.EnquiryResponse;
+import com.jeffjackson.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -38,6 +40,8 @@ public class EnquiryService {
 
     @Autowired
     private BlockScheduleService blockScheduleService;
+    @Autowired
+    private DiscussionRequestRepository discussionRequestRepository;
 
     public void createEnquiry(EnquiryRequest request) throws Exception {
         Enquiry enquiry = new Enquiry();
@@ -241,6 +245,9 @@ public class EnquiryService {
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Deposit must be a valid number");
         }
+    }
+    public void saveDiscussionRequest(DiscussionRequestRecord record) {
+        discussionRequestRepository.save(record);
     }
 
 }

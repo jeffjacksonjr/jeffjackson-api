@@ -1,0 +1,140 @@
+<!-- discussion-request.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request for Discussion</title>
+    <style type="text/css">
+    body, html {
+      margin: 0;
+      padding: 0;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      line-height: 1.6;
+      color: #333333;
+      background-color: #f7f7f7;
+    }
+
+    .email-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .email-header {
+      background-color: #2c3e50;
+      padding: 30px 40px;
+      color: white;
+      text-align: center;
+    }
+
+    .email-header h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 500;
+    }
+
+    .email-content {
+      padding: 40px;
+    }
+
+    .greeting {
+      font-size: 16px;
+      margin-bottom: 25px;
+    }
+
+    .message {
+      font-size: 15px;
+      margin-bottom: 20px;
+      color: #555555;
+    }
+
+    .proposal-box {
+      background-color: #f0f7fb;
+      border-left: 4px solid #3498db;
+      padding: 15px;
+      margin: 20px 0;
+    }
+
+    .proposal-title {
+      font-weight: bold;
+      color: #2c3e50;
+      margin-bottom: 10px;
+    }
+
+    .details {
+      margin: 25px 0;
+    }
+
+    .detail-row {
+      margin-bottom: 8px;
+    }
+
+    .detail-label {
+      font-weight: bold;
+      display: inline-block;
+      width: 120px;
+    }
+
+    .email-footer {
+      padding: 25px 40px;
+      background-color: #f5f5f5;
+      color: #777777;
+      font-size: 13px;
+      border-top: 1px solid #eeeeee;
+    }
+
+    .signature {
+      margin-bottom: 15px;
+      font-style: italic;
+    }
+
+    .contact-info {
+      margin-top: 15px;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+<div class="email-container">
+    <div class="email-header">
+        <h1>Request for Discussion</h1>
+    </div>
+
+    <div class="email-content">
+        <p class="greeting">Dear <span th:text="${clientName} ?: 'Valued Customer'"></span>,</p>
+
+        <p class="message">Thank you for your recent enquiry (Reference: <span th:text="${enquiryId}"></span>). We've reviewed your request and would like to schedule a discussion to better understand your needs.</p>
+
+        <div class="proposal-box">
+            <div class="proposal-title">Proposed Discussion Time</div>
+            <p>We would like to invite you for a discussion on:</p>
+            <p><strong th:text="${proposedDate} + ' at ' + ${proposedTime}"></strong></p>
+        </div>
+
+        <div class="message" th:if="${customMessage}">
+            <p th:text="${customMessage}"></p>
+        </div>
+
+        <p class="message">Please let us know if the proposed time works for you or if you'd like to suggest an alternative.</p>
+
+        <p class="message">We appreciate your interest in our services and look forward to the opportunity to assist you.</p>
+    </div>
+
+    <div class="email-footer">
+        <div class="signature">
+            <p>Best regards,</p>
+            <p><strong th:text="${senderName} ?: 'Our Team'"></strong></p>
+        </div>
+
+        <div class="contact-info">
+            <p>Email: <span th:text="${senderEmail} ?: 'contact@example.com'"></span></p>
+            <p>Phone: <span th:text="${senderPhone} ?: '+1 (800) 123-4567'"></span></p>
+        </div>
+    </div>
+</div>
+</body>
+</html>
