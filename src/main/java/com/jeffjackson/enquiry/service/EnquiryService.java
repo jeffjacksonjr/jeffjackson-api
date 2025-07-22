@@ -123,7 +123,7 @@ public class EnquiryService {
         Pageable pageable = PageRequest.of(page, size);
 
         // Fetch paginated data from repository
-        Page<Enquiry> enquiryPage = enquiryRepository.findAll(pageable);
+        Page<Enquiry> enquiryPage = enquiryRepository.findAllByOrderByCreatedAtDesc(pageable);
 
         // Convert Enquiry entities to EnquiryResponse DTOs
         List<EnquiryResponse> content = enquiryPage.getContent()
