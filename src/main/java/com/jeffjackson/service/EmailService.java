@@ -72,4 +72,31 @@ public class EmailService {
         String htmlContent = templateEngine.process(templateName, context);
         sendHtmlEmail(to, subject, htmlContent);
     }
+
+    public void sendEmailFromTemplateWithCc(String to, String[] cc, String subject,
+                                            String templateName, Map<String, Object> templateModel)
+            throws MessagingException {
+        Context context = new Context();
+        context.setVariables(templateModel);
+        String htmlContent = templateEngine.process(templateName, context);
+        sendHtmlEmailWithCc(to, cc, subject, htmlContent);
+    }
+
+    private void sendHtmlEmailWithCc(String to, String[] cc, String subject, String htmlContent)
+            throws MessagingException {
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+        helper.setTo(to);
+        if (cc != null && cc.length > 0) {
+            helper.setCc(cc);
+        }
+        helper.setSubject(subject);
+        helper.setText(htmlContent, true);
+
+        // Set from address (you might want to make this configurable)
+        helper.setFrom("noreply@djjeffjackson.com");
+
+        mailSender.send(message);
+    }
 }

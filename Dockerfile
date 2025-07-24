@@ -16,6 +16,7 @@ ARG JWT_EXPIRATION
 ARG PUBLIC_PATTERNS
 ARG JWT_CLIENT_ID
 ARG ALLOWED_ORIGINS
+ARG CC_EMAIL_LIST
 
 # Set environment variables
 ENV MONGO_URI=$MONGO_URI \
@@ -31,7 +32,8 @@ ENV MONGO_URI=$MONGO_URI \
     JWT_EXPIRATION=$JWT_EXPIRATION \
     PUBLIC_PATTERNS=$PUBLIC_PATTERNS \
     JWT_CLIENT_ID=$JWT_CLIENT_ID \
-    ALLOWED_ORIGINS=$ALLOWED_ORIGINS
+    ALLOWED_ORIGINS=$ALLOWED_ORIGINS \
+    CC_EMAIL_LIST=$CC_EMAIL_LIST
 
 COPY src /usr/src/app/src
 
@@ -41,8 +43,8 @@ RUN mvn -f /usr/src/app/pom.xml clean package
 
 FROM openjdk:17
 
-COPY --from=build /usr/src/app/target/jeffjackson-1.7.jar /usr/app/jeffjackson-1.7.jar
+COPY --from=build /usr/src/app/target/jeffjackson-1.8.jar /usr/app/jeffjackson-1.8.jar
 
 EXPOSE 5151
 
-CMD ["java", "-jar", "/usr/app/jeffjackson-1.7.jar"]
+CMD ["java", "-jar", "/usr/app/jeffjackson-1.8.jar"]

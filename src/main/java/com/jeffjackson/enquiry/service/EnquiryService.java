@@ -11,6 +11,7 @@ import com.jeffjackson.enquiry.request.EnquiryUpdateRequest;
 import com.jeffjackson.enquiry.response.EnquiryResponse;
 import com.jeffjackson.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -28,6 +29,9 @@ import java.util.stream.Collectors;
 
 @Service
 public class EnquiryService {
+
+    @Value("${cc.email.list}")
+    private String [] ccEmailList;
     private static final String DATE_PATTERN = "MM-dd-yyyy";
     private static final String TIME_PATTERN = "h:mm a";
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(DATE_PATTERN);
@@ -127,8 +131,9 @@ public class EnquiryService {
             adminModel.put("enquiryId", enquiry.getUniqueId());
             adminModel.put("createdAt", enquiry.getCreatedAt());
 
-            emailService.sendEmailFromTemplate(
+            emailService.sendEmailFromTemplateWithCc(
                     "djjeffjackson@gmail.com",
+                    ccEmailList,
                     "New Enquiry Received: " + enquiry.getUniqueId(),
                     "admin-enquiry-notification",
                     adminModel
@@ -141,8 +146,9 @@ public class EnquiryService {
             clientModel.put("eventDate", enquiry.getEventDate());
             clientModel.put("enquiryId", enquiry.getUniqueId());
 
-            emailService.sendEmailFromTemplate(
+            emailService.sendEmailFromTemplateWithCc(
                     enquiry.getEmail(),
+                    ccEmailList,
                     "Thank You for Your Enquiry - " + enquiry.getUniqueId(),
                     "client-enquiry-acknowledgment",
                     clientModel

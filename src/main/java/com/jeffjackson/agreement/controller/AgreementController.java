@@ -27,6 +27,8 @@ public class AgreementController {
 
     @Value("${payment.process.link}")
     private String paymentLink;
+    @Value("${cc.email.list}")
+    private String [] ccEmailList;
 
     @Autowired
     private EnquiryRepository enquiryRepository;
@@ -66,8 +68,9 @@ public class AgreementController {
             model.put("paymentLink", paymentLink);
 
             // Send email using template
-            emailService.sendEmailFromTemplate(
+            emailService.sendEmailFromTemplateWithCc(
                     agreementRequest.getClientEmail(),
+                    ccEmailList,
                     "Agreement Document: " + enquiry.get().getUniqueId(),
                     "email-agreement",
                     model

@@ -10,6 +10,7 @@ import com.jeffjackson.enquiry.service.EnquiryService;
 import com.jeffjackson.model.MessageModel;
 import com.jeffjackson.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +27,10 @@ public class EnquiryController {
 
     @Autowired
     private EmailService emailService;
+
+    @Value("${cc.email.list}")
+    private String [] ccEmailList;
+
     @PostMapping("/public/enquiries")  // Changed to a public endpoint
     public ResponseEntity<Object> createEnquiry(@RequestBody EnquiryRequest request) {
         try{
@@ -78,8 +83,9 @@ public class EnquiryController {
             templateModel.put("senderPhone", "+1 (240) 388-7358");
 
             // Send email
-            emailService.sendEmailFromTemplate(
+            emailService.sendEmailFromTemplateWithCc(
                     request.getClientEmail(),
+                    ccEmailList,
                     "Discussion Request for Your Enquiry",
                     "discussion-request",
                     templateModel
