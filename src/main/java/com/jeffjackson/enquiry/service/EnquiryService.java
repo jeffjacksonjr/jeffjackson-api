@@ -23,9 +23,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.List;
-import java.util.Locale;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,6 +40,9 @@ public class EnquiryService {
     private BlockScheduleService blockScheduleService;
     @Autowired
     private DiscussionRequestRepository discussionRequestRepository;
+
+    @Autowired
+    private EmailService emailService;
 
     public void createEnquiry(EnquiryRequest request) throws Exception {
         Enquiry enquiry = new Enquiry();
@@ -113,6 +114,39 @@ public class EnquiryService {
             blockSchedule.setId(blockKey);
             blockScheduleService.save(blockSchedule);
             enquiryRepository.save(enquiry);
+            // Send email to admin
+            Map<String, Object> adminModel = new HashMap<>();
+            adminModel.put("clientName", enquiry.getClientName());
+            adminModel.put("email", enquiry.getEmail());
+            adminModel.put("phone", enquiry.getPhone());
+            adminModel.put("eventType", enquiry.getEventType());
+            adminModel.put("eventDate", enquiry.getEventDate());
+            adminModel.put("eventTime", enquiry.getEventTime());
+            adminModel.put("address", enquiry.getAddress());
+            adminModel.put("message", enquiry.getMessage());
+            adminModel.put("enquiryId", enquiry.getUniqueId());
+            adminModel.put("createdAt", enquiry.getCreatedAt());
+
+            emailService.sendEmailFromTemplate(
+                    "djjeffjackson@gmail.com",
+                    "New Enquiry Received: " + enquiry.getUniqueId(),
+                    "admin-enquiry-notification",
+                    adminModel
+            );
+
+            // Send email to client
+            Map<String, Object> clientModel = new HashMap<>();
+            clientModel.put("clientName", enquiry.getClientName());
+            clientModel.put("eventType", enquiry.getEventType());
+            clientModel.put("eventDate", enquiry.getEventDate());
+            clientModel.put("enquiryId", enquiry.getUniqueId());
+
+            emailService.sendEmailFromTemplate(
+                    enquiry.getEmail(),
+                    "Thank You for Your Enquiry - " + enquiry.getUniqueId(),
+                    "client-enquiry-acknowledgment",
+                    clientModel
+            );
         }catch (Exception e){
             throw new Exception("Error saving enquiry. Please try again.");
         }

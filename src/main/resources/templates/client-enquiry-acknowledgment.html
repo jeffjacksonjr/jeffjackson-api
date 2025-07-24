@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enquiry Received</title>
+  <style type="text/css">
+    /* Same base styles as your existing template */
+    body, html {
+      margin: 0;
+      padding: 0;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      line-height: 1.6;
+      color: #333333;
+      background-color: #f7f7f7;
+    }
+    .email-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    .email-header {
+      background-color: #2c3e50;
+      padding: 30px 40px;
+      color: white;
+      text-align: center;
+    }
+    .email-header h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 500;
+    }
+    .email-content {
+      padding: 40px;
+    }
+    .greeting {
+      font-size: 16px;
+      margin-bottom: 25px;
+    }
+    .message {
+      font-size: 15px;
+      margin-bottom: 20px;
+      color: #555555;
+    }
+    .highlight-box {
+      background-color: #f0f7ff;
+      border: 1px solid #d0e3ff;
+      padding: 20px;
+      margin: 25px 0;
+      border-radius: 4px;
+    }
+    .next-steps {
+      margin-top: 30px;
+    }
+    .next-steps h3 {
+      margin-bottom: 15px;
+      color: #2c3e50;
+    }
+    .next-steps ol {
+      padding-left: 20px;
+    }
+    .next-steps li {
+      margin-bottom: 10px;
+    }
+    .email-footer {
+      padding: 25px 40px;
+      background-color: #f5f5f5;
+      color: #777777;
+      font-size: 13px;
+      border-top: 1px solid #eeeeee;
+    }
+    .signature {
+      margin-bottom: 15px;
+      font-style: italic;
+    }
+    .contact-info {
+      margin-top: 15px;
+      font-size: 12px;
+    }
+    .reference {
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 1px solid #eeeeee;
+      font-size: 12px;
+      color: #999999;
+    }
+  </style>
+</head>
+<body>
+<div class="email-container">
+  <div class="email-header">
+    <h1>Thank You for Your Enquiry</h1>
+  </div>
+
+  <div class="email-content">
+    <p class="greeting" th:text="'Dear ' + ${clientName} + ','">Dear Client,</p>
+
+    <p class="message">Thank you for reaching out to us regarding your <span th:text="${eventType}"></span> event on <span th:text="${eventDate}"></span>. We've received your enquiry and are excited to help make your event special.</p>
+
+    <div class="highlight-box">
+      <p><strong>What happens next?</strong></p>
+      <p>Jeff Jackson is reviewing your requirements and will contact you within 24 hours to discuss your event in more detail.</p>
+    </div>
+
+    <div class="next-steps">
+      <h3>While You Wait</h3>
+      <ol>
+        <li>Think about any specific requirements or preferences you have for your event.</li>
+        <li>Prepare any questions you might have for our team.</li>
+        <li>Check your spam folder if you don't hear from us within 24 hours.</li>
+      </ol>
+    </div>
+
+    <p class="message">We appreciate the opportunity to be part of your special occasion and look forward to speaking with you soon.</p>
+  </div>
+
+  <div class="email-footer">
+    <div class="signature">
+      <p>Best regards,</p>
+      <p><strong>Jeff Jackson</strong></p>
+    </div>
+
+    <div class="contact-info">
+      <p>Email: djjeffjackson@gmail.com</p>
+      <p>Phone: +1 (240) 388-7358</p>
+    </div>
+
+    <div class="reference">
+      <p th:text="'Your Enquiry ID: ' + ${enquiryId}"></p>
+      <p>Please quote this reference in all communications</p>
+    </div>
+  </div>
+</div>
+</body>
+</html>
