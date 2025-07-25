@@ -54,10 +54,15 @@ public class AgreementController {
 
         FileUploadResponse fileUploadResponse = new FileUploadResponse();
         try {
+            Optional<Enquiry> enquiry = enquiryRepository.findById(agreementRequest.getUniqueId());
+            if(!enquiry.isPresent()) {
+                MessageModel messageModel = new MessageModel("Fail", "No enquiry found, Please check the unique ID.");
+                return ResponseEntity.status(HttpStatus.OK).body(messageModel);
+            }
             fileUploadResponse = fileStorageService.uploadPdfFile(agreementRequest.getFile(), "enquiry");
             String url = fileUploadResponse.getFileUrl();
-            Optional<Enquiry> enquiry = enquiryRepository.findById(agreementRequest.getUniqueId());
             enquiry.get().setAgreementUrl(url);
+            enquiryRepository.save(enquiry.get());
 
             // Prepare model for Thymeleaf template
             Map<String, Object> model = new HashMap<>();
