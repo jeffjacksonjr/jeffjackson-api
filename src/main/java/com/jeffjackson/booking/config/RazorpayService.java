@@ -4,16 +4,15 @@ import com.jeffjackson.booking.model.PaymentCapture;
 import com.jeffjackson.booking.model.PaymentOrder;
 import com.jeffjackson.booking.reporsitory.PaymentCaptureRepository;
 import com.jeffjackson.booking.reporsitory.PaymentOrderRepository;
+import com.jeffjackson.order.model.OrderDetails;
+import com.jeffjackson.order.repository.OrderDetailsRepository;
 import com.razorpay.*;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 import java.time.LocalDateTime;
-import java.util.Base64;
 import java.util.Map;
 import java.util.UUID;
 
@@ -24,14 +23,16 @@ public class RazorpayService {
     private final RazorpayClient razorpayClient;
     public final PaymentOrderRepository paymentOrderRepository;
     private final PaymentCaptureRepository paymentCaptureRepository;
+    private final OrderDetailsRepository orderDetailsRepository;
 
     @Autowired
     public RazorpayService(RazorpayClient razorpayClient,
                            PaymentOrderRepository paymentOrderRepository,
-                           PaymentCaptureRepository paymentCaptureRepository) {
+                           PaymentCaptureRepository paymentCaptureRepository, OrderDetailsRepository orderDetailsRepository) {
         this.razorpayClient = razorpayClient;
         this.paymentOrderRepository = paymentOrderRepository;
         this.paymentCaptureRepository = paymentCaptureRepository;
+        this.orderDetailsRepository = orderDetailsRepository;
     }
 
     public PaymentOrder createOrder(double amount, String currency, String receipt, String bookingId) throws RazorpayException, RazorpayException {
@@ -79,6 +80,33 @@ public class RazorpayService {
         paymentCapture.setStatus(payment.get("status"));
         paymentCapture.setPaymentDate(LocalDateTime.now());
         paymentCapture.setPaymentDetails(paymentDetails);
+
+        OrderDetails orderDetails = new OrderDetails();
+        orderDetails.setUniqueId(order.getUniqueId());
+        orderDetails.setOrderId(orderId);
+        orderDetails.setTransactionNo(paymentId); // Razorpay payment ID as transaction number
+
+        // Get status from Razorpay payment object
+        String status = payment.has("status") ? payment.get("status").toString() : "UNKNOWN";
+        orderDetails.setPaymentStatus(status);
+
+        // Get payment method from payment details or payment object
+        String paymentMethod = paymentDetails.containsKey("method")
+                ? paymentDetails.get("method").toString()
+                : (payment.has("method") ? payment.get("method").toString() : "UNKNOWN");
+        orderDetails.setPaymentMode(paymentMethod);
+
+        // Amount from the order (could also get from payment object if needed)
+        orderDetails.setAmount(String.valueOf(order.getAmount()));
+
+        // Timestamps
+        LocalDateTime now = LocalDateTime.now();
+        orderDetails.setTransactionDate(now);
+        orderDetails.setCreatedAt(now);
+        orderDetails.setUpdatedAt(now);
+
+        // Save OrderDetails to MongoDB
+        orderDetailsRepository.save(orderDetails);
 
         return paymentCaptureRepository.save(paymentCapture);
     }
