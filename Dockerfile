@@ -17,6 +17,8 @@ ARG PUBLIC_PATTERNS
 ARG JWT_CLIENT_ID
 ARG ALLOWED_ORIGINS
 ARG CC_EMAIL_LIST
+ARG RAZORPAY_KEY_ID
+ARG RAZORPAY_SECRET_KEY
 
 # Set environment variables
 ENV MONGO_URI=$MONGO_URI \
@@ -33,7 +35,9 @@ ENV MONGO_URI=$MONGO_URI \
     PUBLIC_PATTERNS=$PUBLIC_PATTERNS \
     JWT_CLIENT_ID=$JWT_CLIENT_ID \
     ALLOWED_ORIGINS=$ALLOWED_ORIGINS \
-    CC_EMAIL_LIST=$CC_EMAIL_LIST
+    CC_EMAIL_LIST=$CC_EMAIL_LIST \
+    RAZORPAY_KEY_ID=$RAZORPAY_KEY_ID \
+    RAZORPAY_SECRET_KEY=$RAZORPAY_SECRET_KEY
 
 COPY src /usr/src/app/src
 
@@ -43,8 +47,8 @@ RUN mvn -f /usr/src/app/pom.xml clean package
 
 FROM openjdk:17
 
-COPY --from=build /usr/src/app/target/jeffjackson-1.9.jar /usr/app/jeffjackson-1.9.jar
+COPY --from=build /usr/src/app/target/jeffjackson-2.0.jar /usr/app/jeffjackson-2.0.jar
 
 EXPOSE 5151
 
-CMD ["java", "-jar", "/usr/app/jeffjackson-1.9.jar"]
+CMD ["java", "-jar", "/usr/app/jeffjackson-2.0.jar"]

@@ -113,7 +113,7 @@ public class EnquiryService {
             blockSchedule.setType("SYSTEM");
             blockSchedule.setDate(enquiry.getEventDate());
             blockSchedule.setTime(enquiry.getEventTime());
-            blockSchedule.setReason("Enquiry Booked with "+ enquiry.getUniqueId());
+            blockSchedule.setReason("Enquiry Booked with ID: "+ enquiry.getUniqueId());
             String blockKey = blockSchedule.getDate().replace("-", "") + blockSchedule.getTime().replace(":", "").replace(" ", "");
             blockSchedule.setId(blockKey);
             blockScheduleService.save(blockSchedule);
