@@ -3,11 +3,10 @@ package com.jeffjackson.booking.service;
 import com.jeffjackson.blockSchedule.model.BlockSchedule;
 import com.jeffjackson.blockSchedule.service.BlockScheduleService;
 import com.jeffjackson.booking.config.RazorpayService;
-import com.jeffjackson.booking.model.Booking;
-import com.jeffjackson.booking.model.BookingRequest;
-import com.jeffjackson.booking.model.PaymentOrder;
+import com.jeffjackson.booking.model.*;
 import com.jeffjackson.booking.reporsitory.BookingRepository;
 import com.jeffjackson.enquiry.model.Enquiry;
+import com.jeffjackson.enquiry.model.PaginatedResponse;
 import com.jeffjackson.service.EmailService;
 import com.razorpay.Payment;
 import com.razorpay.RazorpayClient;
@@ -15,6 +14,10 @@ import com.razorpay.RazorpayException;
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -22,10 +25,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class BookingService {
@@ -107,6 +108,7 @@ public class BookingService {
         booking.setMessage(request.getMessage());
         booking.setAmount(request.getAmount());
         booking.setPaymentCompleted(false);
+        booking.setStatus(BookingStatus.PENDING);
         booking.setTotalAmount(request.getAmount());
         booking.setDepositReceived(request.getAmount());
         booking.setRemainingAmount("0");
@@ -158,7 +160,7 @@ public class BookingService {
         // Update booking status
         Booking booking = bookingRepository.findById(order.getBookingId())
                 .orElseThrow(() -> new IllegalArgumentException("Booking not found"));
-
+        booking.setStatus(BookingStatus.CONFIRMED);
         booking.setPaymentCompleted(true);
         booking.setUpdatedAt(LocalDateTime.now());
         booking = bookingRepository.save(booking);
@@ -216,6 +218,58 @@ public class BookingService {
                 "Your Booking Confirmation - " + booking.getUniqueId(),
                 "client-booking-confirmation",
                 clientModel
+        );
+    }
+
+    public PaginatedResponse<BookingResponse> getPaginatedBookings(int page, int size) {
+        // Create page request
+        Pageable pageable = PageRequest.of(page, size);
+
+        // Fetch paginated data from repository
+        Page<Booking> bookingPage = bookingRepository.findAllByOrderByCreatedAtDesc(pageable);
+
+        // Convert Booking entities to BookingResponse DTOs
+        List<BookingResponse> content = bookingPage.getContent()
+                .stream()
+                .map(this::convertToBookingResponse)
+                .collect(Collectors.toList());
+
+        // Create new page with converted content
+        Page<BookingResponse> responsePage = new PageImpl<>(
+                content,
+                pageable,
+                bookingPage.getTotalElements()
+        );
+
+        // Return paginated response
+        return new PaginatedResponse<>(responsePage);
+    }
+
+    private BookingResponse convertToBookingResponse(Booking booking) {
+        // Combine address fields
+        String address = String.join(", ",
+                booking.getStreet(),
+                booking.getApt(),
+                booking.getCity(),
+                booking.getState()).replaceAll(", , ", ", ");
+
+        return new BookingResponse(
+                booking.getUniqueId(),
+                booking.getClientName(),
+                booking.getEmail(),
+                booking.getPhone(),
+                booking.getEventType(),
+                booking.getType(),
+                booking.getEventDate(),
+                booking.getEventTime(),
+                address,
+                booking.getMessage(),
+                booking.getStatus().name(),
+                booking.getDepositReceived(),
+                booking.getTotalAmount(),
+                booking.getRemainingAmount(),
+                booking.getAgreementUrl(),
+                booking.getCreatedAt()
         );
     }
 }

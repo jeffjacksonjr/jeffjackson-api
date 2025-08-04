@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -17,11 +18,11 @@ public class OrderController {
     @Autowired
     private OrderDetailsRepository orderDetailsRepository;
 
-    @GetMapping("/api/public/orders?uniqueId={uniqueId}")
-    public ResponseEntity<?> getAllOrders(@PathVariable String uniqueId){
+    @GetMapping("/api/public/orders/{uniqueId}")
+    public ResponseEntity<?> getAllOrders(@PathVariable String uniqueId) {
         List<OrderDetails> orders = orderDetailsRepository.findByUniqueId(uniqueId);
         if (orders.isEmpty()) {
-            return ResponseEntity.ok(new MessageModel("fail","No orders found for the given unique ID."));
+            return ResponseEntity.ok(new MessageModel("fail", "No orders found for the given unique ID."));
         } else {
             return ResponseEntity.ok(orders);
         }

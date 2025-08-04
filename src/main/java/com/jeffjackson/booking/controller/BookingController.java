@@ -2,8 +2,10 @@ package com.jeffjackson.booking.controller;
 
 import com.jeffjackson.booking.model.Booking;
 import com.jeffjackson.booking.model.BookingRequest;
+import com.jeffjackson.booking.model.BookingResponse;
 import com.jeffjackson.booking.model.PaymentOrder;
 import com.jeffjackson.booking.service.BookingService;
+import com.jeffjackson.enquiry.model.PaginatedResponse;
 import com.jeffjackson.model.MessageModel;
 import com.razorpay.RazorpayException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/public/bookings")
 public class BookingController {
     private final BookingService bookingService;
 
@@ -23,7 +24,7 @@ public class BookingController {
         this.bookingService = bookingService;
     }
 
-    @PostMapping
+    @PostMapping("/api/public/bookings")
     public ResponseEntity<?> createBooking(@RequestBody BookingRequest request) {
         try {
             Booking booking = bookingService.createBooking(request);
@@ -36,7 +37,16 @@ public class BookingController {
         }
     }
 
-    @PostMapping("/{bookingId}/payment/order")
+    @GetMapping("/api/bookings")
+    public ResponseEntity<PaginatedResponse<BookingResponse>> getBookings(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        PaginatedResponse<BookingResponse> response = bookingService.getPaginatedBookings(page, size);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/api/public/bookings/{bookingId}/payment/order")
     public ResponseEntity<?> createPaymentOrder(@PathVariable String bookingId,
                                                 @RequestParam double amount) {
         try {
@@ -50,7 +60,7 @@ public class BookingController {
         }
     }
 
-    @PostMapping("/payment/callback")
+    @PostMapping("/api/public/bookings/payment/callback")
     public ResponseEntity<?> paymentCallback(@RequestBody Map<String, Object> callbackData) {
         try {
             String razorpayPaymentId = (String) callbackData.get("razorpay_payment_id");
