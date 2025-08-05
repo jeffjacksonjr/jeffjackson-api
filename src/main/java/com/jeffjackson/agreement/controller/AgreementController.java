@@ -127,35 +127,92 @@ public class AgreementController {
     }
 
     @PostMapping("/api/viewAgreement")
-    public ResponseEntity<?> viewAgreement(@RequestBody ViewAgreementRequest request){
-        if(null == request || (null == request.getEmail() && null == request.getUniqueId())){
+    public ResponseEntity<?> viewAgreement(@RequestBody ViewAgreementRequest request) {
+        if (null == request || (null == request.getEmail() && null == request.getUniqueId())) {
             MessageModel messageModel = new MessageModel("Fail", "Invalid request sent");
             return ResponseEntity.status(HttpStatus.OK).body(messageModel);
         }
         try {
-            Optional<Enquiry> data;
-            if(null != request.getEmail() && null != request.getUniqueId() && !request.getUniqueId().isEmpty() && !request.getEmail().isEmpty()){
-                data = Optional.ofNullable(enquiryRepository.findByEmailAndUniqueId(request.getEmail(), request.getUniqueId()));
-            }else{
-                data = enquiryRepository.findById(request.getUniqueId());
-            }
-            if(data.isPresent()){
-                ViewAgreementResponse response = new ViewAgreementResponse();
-                response.setUniqueId(data.get().getUniqueId());
-                response.setClientName(data.get().getClientName());
-                response.setClientEmail(data.get().getEmail());
-                response.setPhone(data.get().getPhone());
-                response.setEventType(data.get().getEventType());
-                response.setEventDateTime(data.get().getEventDate() + data.get().getEventTime());
-                response.setAddress(data.get().getAddress());
-                response.setAgreementUrl(data.get().getAgreementUrl());
-                return ResponseEntity.status(HttpStatus.OK).body(response);
+            if (request.getUniqueId() != null && !request.getUniqueId().isEmpty()) {
+                if (request.getUniqueId().startsWith("BK")) {
+                    // Handle Booking case
+                    Optional<Booking> bookingData;
+                    if (null != request.getEmail() && !request.getEmail().isEmpty()) {
+                        bookingData = Optional.ofNullable(bookingRepository.findByEmailAndUniqueId(request.getEmail(), request.getUniqueId()));
+                    } else {
+                        bookingData = bookingRepository.findById(request.getUniqueId());
+                    }
 
-            }else {
-                MessageModel messageModel = new MessageModel("Fail", "No record found");
-                return ResponseEntity.status(HttpStatus.OK).body(messageModel);
+                    if (bookingData.isPresent()) {
+                        ViewAgreementResponse response = new ViewAgreementResponse();
+                        response.setUniqueId(bookingData.get().getUniqueId());
+                        response.setClientName(bookingData.get().getClientName());
+                        response.setClientEmail(bookingData.get().getEmail());
+                        response.setPhone(bookingData.get().getPhone());
+                        response.setEventType(bookingData.get().getEventType());
+                        response.setEventDateTime(bookingData.get().getEventDate() + " " + bookingData.get().getEventTime());
+                        // Build address with null checks
+                        StringBuilder addressBuilder = new StringBuilder();
+
+                        if (bookingData.get().getStreet() != null && !bookingData.get().getStreet().isEmpty()) {
+                            addressBuilder.append(bookingData.get().getStreet());
+                        }
+
+                        if (bookingData.get().getApt() != null && !bookingData.get().getApt().isEmpty()) {
+                            if (addressBuilder.length() > 0) {
+                                addressBuilder.append(", ");
+                            }
+                            addressBuilder.append(bookingData.get().getApt());
+                        }
+
+                        if (bookingData.get().getCity() != null && !bookingData.get().getCity().isEmpty()) {
+                            if (addressBuilder.length() > 0) {
+                                addressBuilder.append(", ");
+                            }
+                            addressBuilder.append(bookingData.get().getCity());
+                        }
+
+                        if (bookingData.get().getState() != null && !bookingData.get().getState().isEmpty()) {
+                            if (addressBuilder.length() > 0) {
+                                addressBuilder.append(", ");
+                            }
+                            addressBuilder.append(bookingData.get().getState());
+                        }
+
+                        String address = addressBuilder.length() > 0 ? addressBuilder.toString() : "Address not specified";
+                        response.setAddress(address);
+                        response.setAddress(address);
+                        response.setAgreementUrl(bookingData.get().getAgreementUrl());
+                        return ResponseEntity.status(HttpStatus.OK).body(response);
+                    }
+                } else {
+                    // Handle Enquiry case
+                    Optional<Enquiry> enquiryData;
+                    if (null != request.getEmail() && !request.getEmail().isEmpty()) {
+                        enquiryData = Optional.ofNullable(enquiryRepository.findByEmailAndUniqueId(request.getEmail(), request.getUniqueId()));
+                    } else {
+                        enquiryData = enquiryRepository.findById(request.getUniqueId());
+                    }
+
+                    if (enquiryData.isPresent()) {
+                        ViewAgreementResponse response = new ViewAgreementResponse();
+                        response.setUniqueId(enquiryData.get().getUniqueId());
+                        response.setClientName(enquiryData.get().getClientName());
+                        response.setClientEmail(enquiryData.get().getEmail());
+                        response.setPhone(enquiryData.get().getPhone());
+                        response.setEventType(enquiryData.get().getEventType());
+                        response.setEventDateTime(enquiryData.get().getEventDate() + " " + enquiryData.get().getEventTime());
+                        response.setAddress(enquiryData.get().getAddress());
+                        response.setAgreementUrl(enquiryData.get().getAgreementUrl());
+                        return ResponseEntity.status(HttpStatus.OK).body(response);
+                    }
+                }
             }
-        }catch (Exception e){
+
+            MessageModel messageModel = new MessageModel("Fail", "No record found");
+            return ResponseEntity.status(HttpStatus.OK).body(messageModel);
+
+        } catch (Exception e) {
             e.printStackTrace();
             MessageModel messageModel = new MessageModel("Fail", e.getMessage());
             return ResponseEntity.status(HttpStatus.OK).body(messageModel);
