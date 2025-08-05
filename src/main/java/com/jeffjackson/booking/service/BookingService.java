@@ -6,6 +6,7 @@ import com.jeffjackson.booking.config.RazorpayService;
 import com.jeffjackson.booking.model.*;
 import com.jeffjackson.booking.reporsitory.BookingRepository;
 import com.jeffjackson.enquiry.model.Enquiry;
+import com.jeffjackson.enquiry.model.EnquiryStatus;
 import com.jeffjackson.enquiry.model.PaginatedResponse;
 import com.jeffjackson.service.EmailService;
 import com.razorpay.Payment;
@@ -20,6 +21,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -271,5 +273,65 @@ public class BookingService {
                 booking.getAgreementUrl(),
                 booking.getCreatedAt()
         );
+    }
+
+    public void updateBookingFinancials(BookingUpdateRequest updateRequest) {
+        // Validate request
+        if (updateRequest.getUniqueId() == null || updateRequest.getUniqueId().isEmpty()) {
+            throw new IllegalArgumentException("UniqueId is required");
+        }
+
+        if (!"booking".equalsIgnoreCase(updateRequest.getType())) {
+            throw new IllegalArgumentException("Only booking type is supported");
+        }
+
+        // Get the booking from DB
+        Booking booking = bookingRepository.findById(updateRequest.getUniqueId())
+                .orElseThrow(() -> new IllegalArgumentException("No record found in DB with this uniqueId"));
+
+        // Update fields if they are present in request
+        if (updateRequest.getStatus() != null) {
+            updateStatus(booking, updateRequest.getStatus());
+        }
+
+        if (updateRequest.getTotalAmount() != null) {
+            updateTotalAmount(booking, updateRequest.getTotalAmount());
+        }
+
+        bookingRepository.save(booking);
+    }
+
+    private void updateStatus(Booking booking, String status) {
+        try {
+            BookingStatus newStatus = BookingStatus.valueOf(status.toUpperCase());
+            if (booking.getStatus().equals(newStatus)) {
+                throw new IllegalArgumentException("Booking is already in the requested status");
+            }
+            booking.setStatus(newStatus);
+        } catch (IllegalArgumentException e) {
+            if(null != e.getMessage()){
+                throw new IllegalArgumentException(e.getMessage());
+            }
+            throw new IllegalArgumentException("Invalid status value");
+        }
+    }
+
+    private void updateTotalAmount(Booking booking, String amountStr) {
+        try {
+            BigDecimal totalAmount = new BigDecimal(amountStr);
+            if (totalAmount.compareTo(BigDecimal.ZERO) < 0) {
+                throw new IllegalArgumentException("Total amount cannot be negative");
+            }
+
+            booking.setTotalAmount(totalAmount.toString());
+            // Recalculate remaining amount if deposit was already received
+            if (!"0".equals(booking.getDepositReceived())) {
+                BigDecimal deposit = new BigDecimal(booking.getDepositReceived());
+                BigDecimal remaining = totalAmount.subtract(deposit);
+                booking.setRemainingAmount(remaining.compareTo(BigDecimal.ZERO) > 0 ? remaining.toString() : "0");
+            }
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Total amount must be a valid number");
+        }
     }
 }

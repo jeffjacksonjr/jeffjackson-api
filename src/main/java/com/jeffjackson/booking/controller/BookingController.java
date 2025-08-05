@@ -1,11 +1,9 @@
 package com.jeffjackson.booking.controller;
 
-import com.jeffjackson.booking.model.Booking;
-import com.jeffjackson.booking.model.BookingRequest;
-import com.jeffjackson.booking.model.BookingResponse;
-import com.jeffjackson.booking.model.PaymentOrder;
+import com.jeffjackson.booking.model.*;
 import com.jeffjackson.booking.service.BookingService;
 import com.jeffjackson.enquiry.model.PaginatedResponse;
+import com.jeffjackson.enquiry.request.EnquiryUpdateRequest;
 import com.jeffjackson.model.MessageModel;
 import com.razorpay.RazorpayException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,6 +73,18 @@ public class BookingController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new MessageModel("error", "Payment processing failed"));
+        }
+    }
+
+    @PatchMapping("/api/bookings")
+    public ResponseEntity<?> updateEnquiryFinancials(@RequestBody BookingUpdateRequest updateRequest) {
+        try {
+            bookingService.updateBookingFinancials(updateRequest);
+            MessageModel messageModel = new MessageModel("Success", "Booking updated successfully");
+            return ResponseEntity.status(HttpStatus.OK).body(messageModel);
+        } catch (Exception e) {
+            MessageModel messageModel = new MessageModel("Fail", e.getMessage());
+            return ResponseEntity.status(HttpStatus.OK).body(messageModel);
         }
     }
 }
