@@ -3,6 +3,8 @@ package com.jeffjackson.agreement.controller;
 import com.jeffjackson.agreement.model.AgreementRequest;
 import com.jeffjackson.agreement.model.ViewAgreementRequest;
 import com.jeffjackson.agreement.model.ViewAgreementResponse;
+import com.jeffjackson.booking.model.Booking;
+import com.jeffjackson.booking.reporsitory.BookingRepository;
 import com.jeffjackson.enquiry.model.Enquiry;
 import com.jeffjackson.enquiry.service.EnquiryRepository;
 import com.jeffjackson.model.MessageModel;
@@ -34,6 +36,9 @@ public class AgreementController {
     private EnquiryRepository enquiryRepository;
 
     @Autowired
+    private BookingRepository bookingRepository;
+
+    @Autowired
     private EmailService emailService;
 
     @Autowired
@@ -54,33 +59,64 @@ public class AgreementController {
 
         FileUploadResponse fileUploadResponse = new FileUploadResponse();
         try {
-            Optional<Enquiry> enquiry = enquiryRepository.findById(agreementRequest.getUniqueId());
-            if(!enquiry.isPresent()) {
-                MessageModel messageModel = new MessageModel("Fail", "No enquiry found, Please check the unique ID.");
+            if(agreementRequest.getUniqueId().startsWith("EQ")){
+                Optional<Enquiry> enquiry = enquiryRepository.findById(agreementRequest.getUniqueId());
+                if(!enquiry.isPresent()) {
+                    MessageModel messageModel = new MessageModel("Fail", "No enquiry found, Please check the unique ID.");
+                    return ResponseEntity.status(HttpStatus.OK).body(messageModel);
+                }
+                fileUploadResponse = fileStorageService.uploadPdfFile(agreementRequest.getFile(), "enquiry");
+                String url = fileUploadResponse.getFileUrl();
+                enquiry.get().setAgreementUrl(url);
+                enquiryRepository.save(enquiry.get());
+
+                // Prepare model for Thymeleaf template
+                Map<String, Object> model = new HashMap<>();
+                model.put("enquiryId", enquiry.get().getUniqueId());
+                model.put("agreementUrl", url);
+                model.put("clientName", enquiry.get().getClientName() != null ? enquiry.get().getClientName() : "Client");
+                model.put("uploadLink", uploadLink);
+                model.put("paymentLink", paymentLink);
+
+                // Send email using template
+                emailService.sendEmailFromTemplateWithCc(
+                        agreementRequest.getClientEmail(),
+                        ccEmailList,
+                        "Agreement Document: " + enquiry.get().getUniqueId(),
+                        "email-agreement",
+                        model
+                );
+            } else if (agreementRequest.getUniqueId().startsWith("BK")) {
+                Optional<Booking> booking = bookingRepository.findById(agreementRequest.getUniqueId());
+                if(!booking.isPresent()) {
+                    MessageModel messageModel = new MessageModel("Fail", "No enquiry found, Please check the unique ID.");
+                    return ResponseEntity.status(HttpStatus.OK).body(messageModel);
+                }
+                fileUploadResponse = fileStorageService.uploadPdfFile(agreementRequest.getFile(), "booking");
+                String url = fileUploadResponse.getFileUrl();
+                booking.get().setAgreementUrl(url);
+                bookingRepository.save(booking.get());
+
+                // Prepare model for Thymeleaf template
+                Map<String, Object> model = new HashMap<>();
+                model.put("enquiryId", booking.get().getUniqueId());
+                model.put("agreementUrl", url);
+                model.put("clientName", booking.get().getClientName() != null ? booking.get().getClientName() : "Client");
+                model.put("uploadLink", uploadLink);
+                model.put("paymentLink", paymentLink);
+
+                // Send email using template
+                emailService.sendEmailFromTemplateWithCc(
+                        agreementRequest.getClientEmail(),
+                        ccEmailList,
+                        "Agreement Document: " + booking.get().getUniqueId(),
+                        "email-agreement",
+                        model
+                );
+            }else {
+                MessageModel messageModel = new MessageModel("Fail", "No Data found, Please check the unique ID.");
                 return ResponseEntity.status(HttpStatus.OK).body(messageModel);
             }
-            fileUploadResponse = fileStorageService.uploadPdfFile(agreementRequest.getFile(), "enquiry");
-            String url = fileUploadResponse.getFileUrl();
-            enquiry.get().setAgreementUrl(url);
-            enquiryRepository.save(enquiry.get());
-
-            // Prepare model for Thymeleaf template
-            Map<String, Object> model = new HashMap<>();
-            model.put("enquiryId", enquiry.get().getUniqueId());
-            model.put("agreementUrl", url);
-            model.put("clientName", enquiry.get().getClientName() != null ? enquiry.get().getClientName() : "Client");
-            model.put("uploadLink", uploadLink);
-            model.put("paymentLink", paymentLink);
-
-            // Send email using template
-            emailService.sendEmailFromTemplateWithCc(
-                    agreementRequest.getClientEmail(),
-                    ccEmailList,
-                    "Agreement Document: " + enquiry.get().getUniqueId(),
-                    "email-agreement",
-                    model
-            );
-
         } catch (Exception e) {
             e.printStackTrace();
             MessageModel messageModel = new MessageModel("Fail", e.getMessage());
