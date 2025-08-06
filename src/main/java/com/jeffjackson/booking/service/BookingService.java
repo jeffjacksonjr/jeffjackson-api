@@ -100,6 +100,7 @@ public class BookingService {
         booking.setClientName(request.getClientName());
         booking.setEmail(request.getEmail());
         booking.setPhone(request.getPhone());
+        booking.setType("booking");
         booking.setEventType(request.getEventType());
         booking.setEventDate(request.getEventDate());
         booking.setEventTime(request.getEventTime());

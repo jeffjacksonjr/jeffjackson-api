@@ -44,10 +44,11 @@ public class AgreementController {
     @Autowired
     private FileStorageService fileStorageService;
 
-    @PostMapping("/api/sendAgreement")
+    @PostMapping("/api/public/sendAgreement")
     public ResponseEntity<?> sendAgreement(@RequestPart("uniqueId") String uniqueId,
                                            @RequestPart("clientEmail") String clientEmail,
-                                           @RequestPart("file") MultipartFile file) {
+                                           @RequestPart("file") MultipartFile file,
+                                           @RequestPart("type") String type) {
         if (null == uniqueId || null == clientEmail || null == file) {
             MessageModel messageModel = new MessageModel("Fail", "Invalid request data");
             return ResponseEntity.status(HttpStatus.OK).body(messageModel);
@@ -70,22 +71,35 @@ public class AgreementController {
                 enquiry.get().setAgreementUrl(url);
                 enquiryRepository.save(enquiry.get());
 
-                // Prepare model for Thymeleaf template
-                Map<String, Object> model = new HashMap<>();
-                model.put("enquiryId", enquiry.get().getUniqueId());
-                model.put("agreementUrl", url);
-                model.put("clientName", enquiry.get().getClientName() != null ? enquiry.get().getClientName() : "Client");
-                model.put("uploadLink", uploadLink);
-                model.put("paymentLink", paymentLink);
-
                 // Send email using template
-                emailService.sendEmailFromTemplateWithCc(
-                        agreementRequest.getClientEmail(),
-                        ccEmailList,
-                        "Agreement Document: " + enquiry.get().getUniqueId(),
-                        "email-agreement",
-                        model
-                );
+                if(type.equalsIgnoreCase("admin")){
+                    Map<String, Object> model = new HashMap<>();
+                    model.put("enquiryId", enquiry.get().getUniqueId());
+                    model.put("agreementUrl", url);
+                    model.put("clientName", enquiry.get().getClientName() != null ? enquiry.get().getClientName() : "Client");
+                    model.put("uploadLink", uploadLink);
+                    model.put("paymentLink", paymentLink);
+                    emailService.sendEmailFromTemplateWithCc(
+                            agreementRequest.getClientEmail(),
+                            ccEmailList,
+                            "Agreement Document: " + enquiry.get().getUniqueId(),
+                            "email-agreement",
+                            model
+                    );
+                }else{
+                    Map<String, Object> model = new HashMap<>();
+                    model.put("enquiryId", enquiry.get().getUniqueId());
+                    model.put("agreementUrl", url);
+                    model.put("clientName", enquiry.get().getClientName() != null ? enquiry.get().getClientName() : "Client");
+                    model.put("paymentLink", paymentLink);
+                    emailService.sendEmailFromTemplateWithCc(
+                            agreementRequest.getClientEmail(),
+                            ccEmailList,
+                            "Agreement Document: " + enquiry.get().getUniqueId(),
+                            "user-agreement-upload",
+                            model
+                    );
+                }
             } else if (agreementRequest.getUniqueId().startsWith("BK")) {
                 Optional<Booking> booking = bookingRepository.findById(agreementRequest.getUniqueId());
                 if(!booking.isPresent()) {
@@ -98,21 +112,38 @@ public class AgreementController {
                 bookingRepository.save(booking.get());
 
                 // Prepare model for Thymeleaf template
-                Map<String, Object> model = new HashMap<>();
-                model.put("enquiryId", booking.get().getUniqueId());
-                model.put("agreementUrl", url);
-                model.put("clientName", booking.get().getClientName() != null ? booking.get().getClientName() : "Client");
-                model.put("uploadLink", uploadLink);
-                model.put("paymentLink", paymentLink);
+                if(type.equalsIgnoreCase("admin")){
+                    Map<String, Object> model = new HashMap<>();
+                    model.put("enquiryId", booking.get().getUniqueId());
+                    model.put("agreementUrl", url);
+                    model.put("clientName", booking.get().getClientName() != null ? booking.get().getClientName() : "Client");
+                    model.put("uploadLink", uploadLink);
+                    model.put("paymentLink", paymentLink);
 
-                // Send email using template
-                emailService.sendEmailFromTemplateWithCc(
-                        agreementRequest.getClientEmail(),
-                        ccEmailList,
-                        "Agreement Document: " + booking.get().getUniqueId(),
-                        "email-agreement",
-                        model
-                );
+                    // Send email using template
+                    emailService.sendEmailFromTemplateWithCc(
+                            agreementRequest.getClientEmail(),
+                            ccEmailList,
+                            "Agreement Document: " + booking.get().getUniqueId(),
+                            "email-agreement",
+                            model
+                    );
+                }else{
+                    Map<String, Object> model = new HashMap<>();
+                    model.put("enquiryId", booking.get().getUniqueId());
+                    model.put("agreementUrl", url);
+                    model.put("clientName", booking.get().getClientName() != null ? booking.get().getClientName() : "Client");
+                    model.put("paymentLink", paymentLink);
+
+                    // Send email using template
+                    emailService.sendEmailFromTemplateWithCc(
+                            agreementRequest.getClientEmail(),
+                            ccEmailList,
+                            "Agreement Document: " + booking.get().getUniqueId(),
+                            "user-agreement-upload",
+                            model
+                    );
+                }
             }else {
                 MessageModel messageModel = new MessageModel("Fail", "No Data found, Please check the unique ID.");
                 return ResponseEntity.status(HttpStatus.OK).body(messageModel);
