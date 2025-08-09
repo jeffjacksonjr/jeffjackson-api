@@ -14,9 +14,11 @@ public class EnquiryResponse {
     private String address;
     private String message;
     private String status;
+    private boolean askForDeposit;
     private String depositReceived;
     private String totalAmount;
     private String remainingAmount;
+    private String totalAmountReceived;
     private String agreementUrl;
     private LocalDateTime createdAt;
 
@@ -24,7 +26,7 @@ public class EnquiryResponse {
     public EnquiryResponse() {
     }
 
-    public EnquiryResponse(String uniqueId, String clientName, String email, String phone, String eventType, String type, String eventDate, String eventTime, String address, String message, String status, String depositReceived, String totalAmount, String remainingAmount, String agreementUrl, LocalDateTime createdAt) {
+    public EnquiryResponse(String uniqueId, String clientName, String email, String phone, String eventType, String type, String eventDate, String eventTime, String address, String message, String status, boolean askForDeposit, String depositReceived, String totalAmount, String remainingAmount, String totalAmountReceived, String agreementUrl, LocalDateTime createdAt) {
         this.uniqueId = uniqueId;
         this.clientName = clientName;
         this.email = email;
@@ -36,9 +38,11 @@ public class EnquiryResponse {
         this.address = address;
         this.message = message;
         this.status = status;
+        this.askForDeposit = askForDeposit;
         this.depositReceived = depositReceived;
         this.totalAmount = totalAmount;
         this.remainingAmount = remainingAmount;
+        this.totalAmountReceived = totalAmountReceived;
         this.agreementUrl = agreementUrl;
         this.createdAt = createdAt;
     }
@@ -170,5 +174,21 @@ public class EnquiryResponse {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getTotalAmountReceived() {
+        return totalAmountReceived;
+    }
+
+    public void setTotalAmountReceived(String totalAmountReceived) {
+        this.totalAmountReceived = totalAmountReceived;
+    }
+
+    public boolean isAskForDeposit() {
+        return askForDeposit;
+    }
+
+    public void setAskForDeposit(boolean askForDeposit) {
+        this.askForDeposit = askForDeposit;
     }
 }

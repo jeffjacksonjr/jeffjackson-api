@@ -105,12 +105,14 @@ public class EnquiryService {
         enquiry.setDepositReceived(request.getDepositReceived());
         enquiry.setTotalAmount(request.getTotalAmount());
         enquiry.setRemainingAmount(request.getRemainingAmount());
+        enquiry.setTotalAmountReceived("0"); // Default Initialization for Enquiry
+        enquiry.setAskForDeposit(false);
         enquiry.setAgreementUrl(request.getAgreementUrl());
 
         // Save to MongoDB
         try{
             BlockSchedule blockSchedule = new BlockSchedule();
-            blockSchedule.setType("SYSTEM");
+            blockSchedule.setType("ENQUIRY");
             blockSchedule.setDate(enquiry.getEventDate());
             blockSchedule.setTime(enquiry.getEventTime());
             blockSchedule.setReason("Enquiry Booked with ID: "+ enquiry.getUniqueId());
@@ -195,9 +197,11 @@ public class EnquiryService {
                 enquiry.getAddress(),
                 enquiry.getMessage(),
                 enquiry.getStatus().name(),
+                enquiry.isAskForDeposit(),
                 enquiry.getDepositReceived(),
                 enquiry.getTotalAmount(),
                 enquiry.getRemainingAmount(),
+                enquiry.getTotalAmountReceived(),
                 enquiry.getAgreementUrl(),
                 enquiry.getCreatedAt()
         );
@@ -282,6 +286,7 @@ public class EnquiryService {
             enquiry.setDepositReceived(deposit.toString());
             BigDecimal remaining = totalAmount.subtract(deposit);
             enquiry.setRemainingAmount(remaining.compareTo(BigDecimal.ZERO) > 0 ? remaining.toString() : "0");
+            enquiry.setAskForDeposit(true);
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Deposit must be a valid number");
         }

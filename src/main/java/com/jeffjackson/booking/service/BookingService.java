@@ -165,6 +165,7 @@ public class BookingService {
                 .orElseThrow(() -> new IllegalArgumentException("Booking not found"));
         booking.setStatus(BookingStatus.CONFIRMED);
         booking.setPaymentCompleted(true);
+        booking.setTotalAmountReceived(booking.getDepositReceived());
         booking.setUpdatedAt(LocalDateTime.now());
         booking = bookingRepository.save(booking);
 
@@ -174,7 +175,7 @@ public class BookingService {
         return booking;
     }
 
-    private void blockSchedule(Booking booking) {
+    private void  blockSchedule(Booking booking) {
         BlockSchedule blockSchedule = new BlockSchedule();
         blockSchedule.setType("BOOKING");
         blockSchedule.setDate(booking.getEventDate());
@@ -270,6 +271,7 @@ public class BookingService {
                 booking.getStatus().name(),
                 booking.getDepositReceived(),
                 booking.getTotalAmount(),
+                booking.getTotalAmountReceived(),
                 booking.getRemainingAmount(),
                 booking.getAgreementUrl(),
                 booking.getCreatedAt()

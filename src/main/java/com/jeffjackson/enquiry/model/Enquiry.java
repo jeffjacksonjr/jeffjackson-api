@@ -24,9 +24,11 @@ public class Enquiry {
     private String address;
     private String message;
     private EnquiryStatus status;
+    private boolean askForDeposit;
     private String depositReceived;
     private String totalAmount;
     private String remainingAmount;
+    private String totalAmountReceived;
     private String agreementUrl;
     private LocalDateTime createdAt;
     private String key;
@@ -165,5 +167,21 @@ public class Enquiry {
 
     public void setAgreementUrl(String agreementUrl) {
         this.agreementUrl = agreementUrl;
+    }
+
+    public String getTotalAmountReceived() {
+        return totalAmountReceived;
+    }
+
+    public void setTotalAmountReceived(String totalAmountReceived) {
+        this.totalAmountReceived = totalAmountReceived;
+    }
+
+    public boolean isAskForDeposit() {
+        return askForDeposit;
+    }
+
+    public void setAskForDeposit(boolean askForDeposit) {
+        this.askForDeposit = askForDeposit;
     }
 }

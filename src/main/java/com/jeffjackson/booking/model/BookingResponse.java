@@ -16,6 +16,7 @@ public class BookingResponse {
     private String status;
     private String depositReceived;
     private String totalAmount;
+    private String totalAmountReceived;
     private String remainingAmount;
     private String agreementUrl;
     private LocalDateTime createdAt;
@@ -24,11 +25,9 @@ public class BookingResponse {
     }
 
     // Constructor, getters, and setters
-    public BookingResponse(String uniqueId, String clientName, String email, String phone,
-                           String eventType, String type, String eventDate, String eventTime,
-                           String address, String message, String status, String depositReceived,
-                           String totalAmount, String remainingAmount, String agreementUrl,
-                           LocalDateTime createdAt) {
+
+
+    public BookingResponse(String uniqueId, String clientName, String email, String phone, String eventType, String type, String eventDate, String eventTime, String address, String message, String status, String depositReceived, String totalAmount, String totalAmountReceived, String remainingAmount, String agreementUrl, LocalDateTime createdAt) {
         this.uniqueId = uniqueId;
         this.clientName = clientName;
         this.email = email;
@@ -42,6 +41,7 @@ public class BookingResponse {
         this.status = status;
         this.depositReceived = depositReceived;
         this.totalAmount = totalAmount;
+        this.totalAmountReceived = totalAmountReceived;
         this.remainingAmount = remainingAmount;
         this.agreementUrl = agreementUrl;
         this.createdAt = createdAt;
@@ -173,5 +173,13 @@ public class BookingResponse {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getTotalAmountReceived() {
+        return totalAmountReceived;
+    }
+
+    public void setTotalAmountReceived(String totalAmountReceived) {
+        this.totalAmountReceived = totalAmountReceived;
     }
 }

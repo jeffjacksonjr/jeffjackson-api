@@ -31,6 +31,7 @@ public class Booking {
     private BookingStatus status;
     private String depositReceived;
     private String totalAmount;
+    private String totalAmountReceived;
     private String remainingAmount;
     private String agreementUrl;
     private LocalDateTime createdAt;
@@ -39,7 +40,7 @@ public class Booking {
     public Booking() {
     }
 
-    public Booking(String key, String uniqueId, String clientName, String email, String phone, String eventType, String type, String eventDate, String eventTime, String street, String apt, String city, String state, String message, String amount, boolean paymentCompleted, BookingStatus status, String depositReceived, String totalAmount, String remainingAmount, String agreementUrl, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public Booking(String key, String uniqueId, String clientName, String email, String phone, String eventType, String type, String eventDate, String eventTime, String street, String apt, String city, String state, String message, String amount, boolean paymentCompleted, BookingStatus status, String depositReceived, String totalAmount, String totalAmountReceived, String remainingAmount, String agreementUrl, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.key = key;
         this.uniqueId = uniqueId;
         this.clientName = clientName;
@@ -59,6 +60,7 @@ public class Booking {
         this.status = status;
         this.depositReceived = depositReceived;
         this.totalAmount = totalAmount;
+        this.totalAmountReceived = totalAmountReceived;
         this.remainingAmount = remainingAmount;
         this.agreementUrl = agreementUrl;
         this.createdAt = createdAt;
@@ -247,5 +249,13 @@ public class Booking {
 
     public void setKey(String key) {
         this.key = key;
+    }
+
+    public String getTotalAmountReceived() {
+        return totalAmountReceived;
+    }
+
+    public void setTotalAmountReceived(String totalAmountReceived) {
+        this.totalAmountReceived = totalAmountReceived;
     }
 }
