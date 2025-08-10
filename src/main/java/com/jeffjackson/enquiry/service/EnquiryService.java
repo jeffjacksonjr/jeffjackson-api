@@ -32,6 +32,10 @@ public class EnquiryService {
 
     @Value("${cc.email.list}")
     private String [] ccEmailList;
+
+    @Value("${baseUrl}")
+    private String reviewBaseUrl;
+
     private static final String DATE_PATTERN = "MM-dd-yyyy";
     private static final String TIME_PATTERN = "h:mm a";
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(DATE_PATTERN);
@@ -244,8 +248,12 @@ public class EnquiryService {
                 throw new IllegalArgumentException("Enquiry is already in the requested status");
             }
             enquiry.setStatus(newStatus);
+
+            if (newStatus == EnquiryStatus.FINALIZED) {
+                sendReviewEmail(enquiry.getUniqueId(), enquiry.getClientName(), enquiry.getEmail());
+            }
         } catch (IllegalArgumentException e) {
-            if(null != e.getMessage()){
+            if (e.getMessage() != null) {
                 throw new IllegalArgumentException(e.getMessage());
             }
             throw new IllegalArgumentException("Invalid status value");
@@ -293,6 +301,24 @@ public class EnquiryService {
     }
     public void saveDiscussionRequest(DiscussionRequestRecord record) {
         discussionRequestRepository.save(record);
+    }
+
+    private void sendReviewEmail(String uniqueId, String clientName, String email) {
+        try {
+            Map<String, Object> model = new HashMap<>();
+            model.put("clientName", clientName != null ? clientName : "Client");
+            model.put("referenceId", uniqueId);
+            model.put("reviewUrl", reviewBaseUrl + "/review/" + uniqueId);
+
+            emailService.sendEmailFromTemplate(
+                    email,
+                    "Share Your Experience - Jeff Jackson DJ Services",
+                    "client-feedback-request", // Template name
+                    model
+            );
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Authentication fail");
+        }
     }
 
 }

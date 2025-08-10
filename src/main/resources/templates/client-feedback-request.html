@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Share Your Experience</title>
+    <style type="text/css">
+        /* Base Styles */
+        body, html {
+          margin: 0;
+          padding: 0;
+          font-family: 'Helvetica Neue', Arial, sans-serif;
+          line-height: 1.6;
+          color: #333333;
+          background-color: #f7f7f7;
+        }
+
+        /* Email Container */
+        .email-container {
+          max-width: 600px;
+          margin: 0 auto;
+          background: #ffffff;
+          border-radius: 8px;
+          overflow: hidden;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Header */
+        .email-header {
+          background: linear-gradient(135deg, #6e48aa 0%, #9d50bb 100%);
+          padding: 30px 40px;
+          color: white;
+          text-align: center;
+        }
+
+        .email-header h1 {
+          margin: 0;
+          font-size: 24px;
+          font-weight: 500;
+        }
+
+        /* Content */
+        .email-content {
+          padding: 40px;
+        }
+
+        .greeting {
+          font-size: 16px;
+          margin-bottom: 25px;
+        }
+
+        .message {
+          font-size: 15px;
+          margin-bottom: 20px;
+          color: #555555;
+        }
+
+        /* Review Section */
+        .review-section {
+          background-color: #f9f5ff;
+          padding: 25px;
+          border-radius: 8px;
+          margin: 25px 0;
+          border-left: 4px solid #6e48aa;
+        }
+
+        .stars {
+          color: #FFD700;
+          font-size: 24px;
+          letter-spacing: 5px;
+          text-align: center;
+          margin: 15px 0;
+        }
+
+        /* Button */
+        .button-container {
+          margin: 30px 0;
+          text-align: center;
+        }
+
+        .button {
+          display: inline-block;
+          padding: 12px 30px;
+          background: linear-gradient(135deg, #6e48aa 0%, #9d50bb 100%);
+          color: white !important;
+          text-decoration: none;
+          border-radius: 30px;
+          font-weight: 500;
+          font-size: 15px;
+        }
+
+        /* Footer */
+        .email-footer {
+          padding: 25px 40px;
+          background-color: #f5f5f5;
+          color: #777777;
+          font-size: 13px;
+          border-top: 1px solid #eeeeee;
+        }
+
+        .signature {
+          margin-bottom: 15px;
+          font-style: italic;
+        }
+
+        .contact-info {
+          margin-top: 15px;
+          font-size: 12px;
+        }
+
+        .reference {
+          margin-top: 20px;
+          padding-top: 15px;
+          border-top: 1px solid #eeeeee;
+          font-size: 12px;
+          color: #999999;
+        }
+    </style>
+</head>
+<body>
+<div class="email-container">
+    <div class="email-header">
+        <h1>We Value Your Feedback!</h1>
+    </div>
+
+    <div class="email-content">
+        <p class="greeting" th:text="'Dear ' + ${clientName} + ','">Dear Client,</p>
+
+        <p class="message">Thank you for choosing Jeff Jackson DJ Services! We hope you enjoyed your event.</p>
+
+        <!-- Review Section -->
+        <div class="review-section">
+            <p class="message">Please take a moment to share your experience:</p>
+            <div class="stars">★★★★★</div>
+            <div class="button-container">
+                <a th:href="${reviewUrl}" class="button">Leave Your Review</a>
+            </div>
+        </div>
+
+        <p class="message">Your feedback helps us improve our services and helps others discover our work.</p>
+
+        <p class="message">With gratitude,</p>
+    </div>
+
+    <div class="email-footer">
+        <div class="signature">
+            <p><strong>The Jeff Jackson Team</strong></p>
+        </div>
+
+        <div class="contact-info">
+            <p>Email: jeff.jackson@example.com</p>
+            <p>Mobile: +1 (240) 388-7358</p>
+        </div>
+
+        <div class="reference">
+            <p th:text="'Reference ID: ' + ${referenceId}"></p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

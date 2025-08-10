@@ -9,6 +9,6 @@ public class RootController {
 
     @GetMapping("/")
     public ResponseEntity<String> healthCheck(){
-        return ResponseEntity.ok("API is up and running v2.0.3");
+        return ResponseEntity.ok("API is up and running v2.0.4");
     }
 }

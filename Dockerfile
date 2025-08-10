@@ -19,6 +19,7 @@ ARG ALLOWED_ORIGINS
 ARG CC_EMAIL_LIST
 ARG RAZORPAY_KEY_ID
 ARG RAZORPAY_SECRET_KEY
+ARG BASE_URL
 
 # Set environment variables
 ENV MONGO_URI=$MONGO_URI \
@@ -37,7 +38,8 @@ ENV MONGO_URI=$MONGO_URI \
     ALLOWED_ORIGINS=$ALLOWED_ORIGINS \
     CC_EMAIL_LIST=$CC_EMAIL_LIST \
     RAZORPAY_KEY_ID=$RAZORPAY_KEY_ID \
-    RAZORPAY_SECRET_KEY=$RAZORPAY_SECRET_KEY
+    RAZORPAY_SECRET_KEY=$RAZORPAY_SECRET_KEY \
+    BASE_URL = $BASE_URL
 
 COPY src /usr/src/app/src
 
@@ -47,8 +49,8 @@ RUN mvn -f /usr/src/app/pom.xml clean package
 
 FROM openjdk:17
 
-COPY --from=build /usr/src/app/target/jeffjackson-2.0.3.jar /usr/app/jeffjackson-2.0.3.jar
+COPY --from=build /usr/src/app/target/jeffjackson-2.0.4.jar /usr/app/jeffjackson-2.0.4.jar
 
 EXPOSE 5151
 
-CMD ["java", "-jar", "/usr/app/jeffjackson-2.0.3.jar"]
+CMD ["java", "-jar", "/usr/app/jeffjackson-2.0.4.jar"]

@@ -40,6 +40,9 @@ public class BookingService {
     private final EmailService emailService;
     @Value("${cc.email.list}")
     private String [] ccEmailList;
+    @Value("${baseUrl}")
+    private String reviewBaseUrl;
+
     private static final String DATE_PATTERN = "MM-dd-yyyy";
     private static final String TIME_PATTERN = "h:mm a";
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(DATE_PATTERN);
@@ -311,8 +314,12 @@ public class BookingService {
                 throw new IllegalArgumentException("Booking is already in the requested status");
             }
             booking.setStatus(newStatus);
+
+            if (newStatus == BookingStatus.COMPLETED) {
+                sendReviewEmail(booking.getUniqueId(), booking.getClientName(), booking.getEmail());
+            }
         } catch (IllegalArgumentException e) {
-            if(null != e.getMessage()){
+            if (e.getMessage() != null) {
                 throw new IllegalArgumentException(e.getMessage());
             }
             throw new IllegalArgumentException("Invalid status value");
@@ -335,6 +342,24 @@ public class BookingService {
             }
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Total amount must be a valid number");
+        }
+    }
+
+    private void sendReviewEmail(String uniqueId, String clientName, String email) {
+        try {
+            Map<String, Object> model = new HashMap<>();
+            model.put("clientName", clientName != null ? clientName : "Client");
+            model.put("referenceId", uniqueId);
+            model.put("reviewUrl", reviewBaseUrl + "/review/" + uniqueId);
+
+            emailService.sendEmailFromTemplate(
+                    email,
+                    "Share Your Experience - Jeff Jackson DJ Services",
+                    "client-feedback-request", // Template name
+                    model
+            );
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Authentication fail");
         }
     }
 }
