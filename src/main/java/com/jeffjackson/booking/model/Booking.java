@@ -36,11 +36,12 @@ public class Booking {
     private String agreementUrl;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private String paypalTransactionId;
 
     public Booking() {
     }
 
-    public Booking(String key, String uniqueId, String clientName, String email, String phone, String eventType, String type, String eventDate, String eventTime, String street, String apt, String city, String state, String message, String amount, boolean paymentCompleted, BookingStatus status, String depositReceived, String totalAmount, String totalAmountReceived, String remainingAmount, String agreementUrl, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public Booking(String key, String uniqueId, String clientName, String email, String phone, String eventType, String type, String eventDate, String eventTime, String street, String apt, String city, String state, String message, String amount, boolean paymentCompleted, BookingStatus status, String depositReceived, String totalAmount, String totalAmountReceived, String remainingAmount, String agreementUrl, LocalDateTime createdAt, LocalDateTime updatedAt, String paypalTransactionId) {
         this.key = key;
         this.uniqueId = uniqueId;
         this.clientName = clientName;
@@ -65,6 +66,7 @@ public class Booking {
         this.agreementUrl = agreementUrl;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.paypalTransactionId = paypalTransactionId;
     }
 
     public String getUniqueId() {
@@ -257,5 +259,13 @@ public class Booking {
 
     public void setTotalAmountReceived(String totalAmountReceived) {
         this.totalAmountReceived = totalAmountReceived;
+    }
+
+    public String getPaypalTransactionId() {
+        return paypalTransactionId;
+    }
+
+    public void setPaypalTransactionId(String paypalTransactionId) {
+        this.paypalTransactionId = paypalTransactionId;
     }
 }

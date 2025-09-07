@@ -116,10 +116,12 @@ public class BookingService {
         booking.setPaymentCompleted(false);
         booking.setStatus(BookingStatus.PENDING);
         booking.setTotalAmount(request.getAmount());
+        booking.setTotalAmountReceived(request.getAmount());
         booking.setDepositReceived(request.getAmount());
         booking.setRemainingAmount("0");
         booking.setCreatedAt(LocalDateTime.now());
         booking.setUpdatedAt(LocalDateTime.now());
+        booking.setPaypalTransactionId(request.getPaypalTransactionId());
         booking.setKey(key.toUpperCase());
 
 //        booking.setKey(key);
@@ -277,6 +279,7 @@ public class BookingService {
                 booking.getTotalAmountReceived(),
                 booking.getRemainingAmount(),
                 booking.getAgreementUrl(),
+                booking.getPaypalTransactionId(),
                 booking.getCreatedAt()
         );
     }

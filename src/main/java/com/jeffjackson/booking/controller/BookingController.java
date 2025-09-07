@@ -1,6 +1,7 @@
 package com.jeffjackson.booking.controller;
 
 import com.jeffjackson.booking.model.*;
+import com.jeffjackson.booking.reporsitory.BookingRepository;
 import com.jeffjackson.booking.service.BookingService;
 import com.jeffjackson.enquiry.model.PaginatedResponse;
 import com.jeffjackson.enquiry.request.EnquiryUpdateRequest;
@@ -16,6 +17,9 @@ import java.util.Map;
 @RestController
 public class BookingController {
     private final BookingService bookingService;
+
+    @Autowired
+    private BookingRepository bookingRepository;
 
     @Autowired
     public BookingController(BookingService bookingService) {
@@ -85,6 +89,28 @@ public class BookingController {
         } catch (Exception e) {
             MessageModel messageModel = new MessageModel("Fail", e.getMessage());
             return ResponseEntity.status(HttpStatus.OK).body(messageModel);
+        }
+    }
+
+    @PostMapping("/api/public/bookings/check-availability")
+    public ResponseEntity<?> checkBookingAvailability(@RequestBody BookingAvailabilityRequest request) {
+        try {
+            // Generate the same key used for booking validation
+            String key = request.getEventDate().replace("-", "")
+                    + request.getEventTime().replace(":", "").replace(" ", "")
+                    + request.getEmail().split("@")[0];
+
+            Booking existingBooking = bookingRepository.findByKey(key.toUpperCase());
+
+            if (existingBooking != null) {
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body(new MessageModel("error", "Booking already exists. Your Booking Id is: " + existingBooking.getUniqueId()));
+            }
+
+            return ResponseEntity.ok(new MessageModel("success", "Booking slot is available"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new MessageModel("error", "Failed to check booking availability"));
         }
     }
 }

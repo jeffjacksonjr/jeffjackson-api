@@ -19,6 +19,7 @@ public class BookingResponse {
     private String totalAmountReceived;
     private String remainingAmount;
     private String agreementUrl;
+    private String paypalTransactionId;
     private LocalDateTime createdAt;
 
     public BookingResponse() {
@@ -27,7 +28,7 @@ public class BookingResponse {
     // Constructor, getters, and setters
 
 
-    public BookingResponse(String uniqueId, String clientName, String email, String phone, String eventType, String type, String eventDate, String eventTime, String address, String message, String status, String depositReceived, String totalAmount, String totalAmountReceived, String remainingAmount, String agreementUrl, LocalDateTime createdAt) {
+    public BookingResponse(String uniqueId, String clientName, String email, String phone, String eventType, String type, String eventDate, String eventTime, String address, String message, String status, String depositReceived, String totalAmount, String totalAmountReceived, String remainingAmount, String agreementUrl, String paypalTransactionId, LocalDateTime createdAt) {
         this.uniqueId = uniqueId;
         this.clientName = clientName;
         this.email = email;
@@ -44,6 +45,7 @@ public class BookingResponse {
         this.totalAmountReceived = totalAmountReceived;
         this.remainingAmount = remainingAmount;
         this.agreementUrl = agreementUrl;
+        this.paypalTransactionId = paypalTransactionId;
         this.createdAt = createdAt;
     }
 
@@ -181,5 +183,13 @@ public class BookingResponse {
 
     public void setTotalAmountReceived(String totalAmountReceived) {
         this.totalAmountReceived = totalAmountReceived;
+    }
+
+    public String getPaypalTransactionId() {
+        return paypalTransactionId;
+    }
+
+    public void setPaypalTransactionId(String paypalTransactionId) {
+        this.paypalTransactionId = paypalTransactionId;
     }
 }
