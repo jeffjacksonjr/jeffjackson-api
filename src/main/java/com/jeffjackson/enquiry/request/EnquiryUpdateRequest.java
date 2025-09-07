@@ -6,6 +6,7 @@ public class EnquiryUpdateRequest {
     private String status;
     private String depositReceived;
     private String totalAmount;
+    private String totalAmountReceived;
 
     // Getters and Setters
     public String getUniqueId() {
@@ -46,5 +47,13 @@ public class EnquiryUpdateRequest {
 
     public void setTotalAmount(String totalAmount) {
         this.totalAmount = totalAmount;
+    }
+
+    public String getTotalAmountReceived() {
+        return totalAmountReceived;
+    }
+
+    public void setTotalAmountReceived(String totalAmountReceived) {
+        this.totalAmountReceived = totalAmountReceived;
     }
 }

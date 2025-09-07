@@ -238,7 +238,37 @@ public class EnquiryService {
             updateDepositReceived(enquiry, updateRequest.getDepositReceived());
         }
 
+        if (updateRequest.getTotalAmountReceived() != null) {
+            updateTotalAmountReceived(enquiry, updateRequest.getTotalAmountReceived());
+        }
+
         enquiryRepository.save(enquiry);
+    }
+
+    private void updateTotalAmountReceived(Enquiry enquiry, String amountStr) {
+        try {
+            BigDecimal totalAmountReceived = new BigDecimal(amountStr);
+            if (totalAmountReceived.compareTo(BigDecimal.ZERO) < 0) {
+                throw new IllegalArgumentException("Total amount received cannot be negative");
+            }
+
+            // Validate against total amount if it's set
+            if (enquiry.getTotalAmount() != null && !enquiry.getTotalAmount().isEmpty()) {
+                BigDecimal totalAmount = new BigDecimal(enquiry.getTotalAmount());
+                if (totalAmountReceived.compareTo(totalAmount) > 0) {
+                    throw new IllegalArgumentException("Total amount received cannot exceed total amount");
+                }
+
+                // Calculate remaining amount
+                BigDecimal remainingAmount = totalAmount.subtract(totalAmountReceived);
+                enquiry.setRemainingAmount(remainingAmount.compareTo(BigDecimal.ZERO) > 0 ? remainingAmount.toString() : "0");
+            }
+
+            enquiry.setTotalAmountReceived(totalAmountReceived.toString());
+
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Total amount received must be a valid number");
+        }
     }
 
     private void updateStatus(Enquiry enquiry, String status) {
