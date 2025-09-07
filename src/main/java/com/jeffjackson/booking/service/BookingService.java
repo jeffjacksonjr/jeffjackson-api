@@ -307,7 +307,31 @@ public class BookingService {
             updateTotalAmount(booking, updateRequest.getTotalAmount());
         }
 
+        if (updateRequest.getTotalAmountReceived() != null) {
+            updateTotalAmountReceived(booking, updateRequest.getTotalAmountReceived());
+        }
+
         bookingRepository.save(booking);
+    }
+
+    private void updateTotalAmountReceived(Booking booking, String amountStr) {
+        try {
+            BigDecimal totalAmountReceived = new BigDecimal(amountStr);
+            if (totalAmountReceived.compareTo(BigDecimal.ZERO) < 0) {
+                throw new IllegalArgumentException("Total amount received cannot be negative");
+            }
+
+            booking.setTotalAmountReceived(totalAmountReceived.toString());
+
+            // Recalculate remaining amount if total amount is set
+            if (booking.getTotalAmount() != null && !booking.getTotalAmount().isEmpty()) {
+                BigDecimal totalAmount = new BigDecimal(booking.getTotalAmount());
+                BigDecimal remaining = totalAmount.subtract(totalAmountReceived);
+                booking.setRemainingAmount(remaining.compareTo(BigDecimal.ZERO) > 0 ? remaining.toString() : "0");
+            }
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Total amount received must be a valid number");
+        }
     }
 
     private void updateStatus(Booking booking, String status) {

@@ -5,15 +5,9 @@ public class BookingUpdateRequest {
     private String type;
     private String status;
     private String totalAmount;
+    private String totalAmountReceived;
 
     public BookingUpdateRequest() {
-    }
-
-    public BookingUpdateRequest(String uniqueId, String type, String status, String totalAmount) {
-        this.uniqueId = uniqueId;
-        this.type = type;
-        this.status = status;
-        this.totalAmount = totalAmount;
     }
 
     public String getUniqueId() {
@@ -46,5 +40,13 @@ public class BookingUpdateRequest {
 
     public void setTotalAmount(String totalAmount) {
         this.totalAmount = totalAmount;
+    }
+
+    public String getTotalAmountReceived() {
+        return totalAmountReceived;
+    }
+
+    public void setTotalAmountReceived(String totalAmountReceived) {
+        this.totalAmountReceived = totalAmountReceived;
     }
 }
