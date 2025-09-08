@@ -129,6 +129,9 @@ public class BookingService {
         // Save booking
         booking = bookingRepository.save(booking);
 
+        // Send booking created email
+        sendBookingStatusEmail(booking, "CREATED");
+
         // Block the schedule
         blockSchedule(booking);
 
@@ -345,6 +348,12 @@ public class BookingService {
             if (newStatus == BookingStatus.COMPLETED) {
                 sendReviewEmail(booking.getUniqueId(), booking.getClientName(), booking.getEmail());
             }
+            if(newStatus == BookingStatus.CONFIRMED){
+                sendBookingStatusEmail(booking, "CONFIRMED");
+            }
+            if(newStatus == BookingStatus.CANCELLED){
+                sendBookingStatusEmail(booking, "CANCELLED");
+            }
         } catch (IllegalArgumentException e) {
             if (e.getMessage() != null) {
                 throw new IllegalArgumentException(e.getMessage());
@@ -387,6 +396,51 @@ public class BookingService {
             );
         } catch (Exception e) {
             throw new IllegalArgumentException("Authentication fail");
+        }
+    }
+
+    private void sendBookingStatusEmail(Booking booking, String status) {
+        try {
+            Map<String, Object> model = new HashMap<>();
+            model.put("clientName", booking.getClientName());
+            model.put("uniqueId", booking.getUniqueId());
+            model.put("eventType", booking.getEventType());
+            model.put("eventDate", booking.getEventDate());
+            model.put("eventTime", booking.getEventTime());
+            model.put("eventLocation", booking.getStreet() + ", " + booking.getCity() + ", " + booking.getState());
+
+            String templateName;
+            String subject;
+
+            switch (status.toUpperCase()) {
+                case "CREATED":
+                    templateName = "booking-created";
+                    subject = "Booking Received - Reference: " + booking.getUniqueId();
+                    break;
+                case "CONFIRMED":
+                    templateName = "booking-confirmed";
+                    subject = "Booking Confirmed - Reference: " + booking.getUniqueId();
+                    // Add additional details for confirmed booking
+                    model.put("totalAmount", "$" + booking.getTotalAmount());
+                    break;
+                case "CANCELLED":
+                    templateName = "booking-cancelled";
+                    subject = "Booking Cancelled - Reference: " + booking.getUniqueId();
+                    break;
+                default:
+                    return;
+            }
+
+            emailService.sendEmailFromTemplateWithCc(
+                    booking.getEmail(),
+                    ccEmailList,
+                    subject,
+                    templateName,
+                    model
+            );
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

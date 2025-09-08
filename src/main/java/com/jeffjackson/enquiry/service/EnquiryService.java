@@ -343,7 +343,7 @@ public class EnquiryService {
             emailService.sendEmailFromTemplate(
                     email,
                     "Share Your Experience - Jeff Jackson DJ Services",
-                    "client-feedback-request", // Template name
+                    "client-feedback-request",
                     model
             );
         } catch (Exception e) {

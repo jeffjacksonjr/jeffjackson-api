@@ -2,19 +2,27 @@ package com.jeffjackson.review.service;
 
 import com.jeffjackson.review.model.Review;
 import com.jeffjackson.review.repository.ReviewRepository;
+import com.jeffjackson.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
+    private final EmailService emailService;
+    @Value("${cc.email.list}")
+    private String [] ccEmailList;
 
     @Autowired
-    public ReviewService(ReviewRepository reviewRepository) {
+    public ReviewService(ReviewRepository reviewRepository, EmailService emailService) {
         this.reviewRepository = reviewRepository;
+        this.emailService = emailService;
     }
 
     public Review submitReview(Review review) {
@@ -32,6 +40,9 @@ public class ReviewService {
         review.setSubmitted(true);
         review.setCreatedAt(LocalDateTime.now());
         review.setUpdatedAt(LocalDateTime.now());
+
+        // Send notification email to admin
+        sendReviewNotificationEmail(review);
 
         return reviewRepository.save(review);
     }
@@ -59,5 +70,27 @@ public class ReviewService {
 
     public boolean checkIfSubmitted(String uniqueId) {
         return reviewRepository.existsByUniqueId(uniqueId);
+    }
+
+    private void sendReviewNotificationEmail(Review review) {
+        try {
+            Map<String, Object> model = new HashMap<>();
+            model.put("clientName", review.getClientName());
+            model.put("uniqueId", review.getUniqueId());
+            model.put("rating", review.getRating());
+            model.put("reviewText", review.getClientFeedback());
+            model.put("submittedAt", review.getCreatedAt());
+
+            emailService.sendEmailFromTemplateWithCc(
+                    "djjeffjackson@gmail.com",
+                    ccEmailList,
+                    "⭐ New Review Received - Reference: " + review.getUniqueId(),
+                    "admin-review-notification",
+                    model
+            );
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

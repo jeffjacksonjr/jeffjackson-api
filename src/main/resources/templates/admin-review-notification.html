@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Review Received</title>
+    <style type="text/css">
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333333;
+            background-color: #f7f7f7;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        .email-header {
+            background: linear-gradient(135deg, #6d28d9 0%, #8b5cf6 100%);
+            padding: 30px 40px;
+            color: white;
+            text-align: center;
+        }
+        .email-header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 500;
+        }
+        .email-content {
+            padding: 40px;
+        }
+        .greeting {
+            font-size: 16px;
+            margin-bottom: 25px;
+        }
+        .message {
+            font-size: 15px;
+            margin-bottom: 20px;
+            color: #555555;
+        }
+        .details-box {
+            background-color: #f8f5ff;
+            border-left: 4px solid #8b5cf6;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        .detail-row {
+            margin-bottom: 12px;
+            display: flex;
+        }
+        .detail-label {
+            font-weight: 600;
+            width: 140px;
+            color: #6d28d9;
+        }
+        .detail-value {
+            flex: 1;
+        }
+        .rating-stars {
+            color: #f59e0b;
+            font-weight: bold;
+        }
+        .review-content {
+            background-color: #f9fafb;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 15px 0;
+            border-left: 3px solid #e5e7eb;
+        }
+        .email-footer {
+            padding: 25px 40px;
+            background-color: #f8f5ff;
+            color: #666666;
+            font-size: 13px;
+            border-top: 1px solid #e9d5ff;
+        }
+        .signature {
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+        .reference {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #e9d5ff;
+            font-size: 12px;
+            color: #999999;
+        }
+        .action-button {
+            display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #6d28d9 0%, #8b5cf6 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            margin: 20px 0;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+<div class="email-container">
+    <div class="email-header">
+        <h1>🌟 New Review Received</h1>
+        <p>A client has shared their experience</p>
+    </div>
+
+    <div class="email-content">
+        <p class="greeting">Dear Admin,</p>
+
+        <p class="message">Great news! A client has submitted a new review for your services. Here are the details:</p>
+
+        <div class="details-box">
+            <div class="detail-row">
+                <span class="detail-label">Client Name:</span>
+                <span class="detail-value" th:text="${clientName} ?: 'Anonymous'"></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Reference ID:</span>
+                <span class="detail-value" th:text="${uniqueId}"></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Rating:</span>
+                <span class="detail-value rating-stars" th:text="${'★'.repeat(rating) + '☆'.repeat(5-rating) + ' (' + rating + '/5)'}"></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Submitted On:</span>
+                <span class="detail-value" th:text="${#temporals.format(submittedAt, 'MMM dd, yyyy hh:mm a')}"></span>
+            </div>
+        </div>
+
+        <div th:if="${reviewText}" class="review-content">
+            <p><strong>Client Feedback:</strong></p>
+            <p th:text="${reviewText}"></p>
+        </div>
+
+        <p class="message">This feedback helps us improve our services and build trust with future clients.</p>
+
+    </div>
+
+    <div class="email-footer">
+        <div class="signature">
+            <p>Best regards,</p>
+            <p><strong>Website Notification System</strong></p>
+        </div>
+
+        <div class="reference">
+            <p th:text="'Review ID: ' + ${reviewId}"></p>
+            <p>© DJ Jeff Jackson. All rights reserved.</p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

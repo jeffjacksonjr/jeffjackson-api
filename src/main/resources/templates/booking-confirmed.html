@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #f9f9f9;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #6d28d9 0%, #8b5cf6 100%);
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
+        .content {
+            padding: 30px;
+        }
+        .footer {
+            background-color: #f8f5ff;
+            padding: 20px;
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+        }
+        .booking-id {
+            background-color: #f3f4f6;
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+            margin: 20px 0;
+            font-weight: bold;
+            color: #6d28d9;
+        }
+        .confirmed-badge {
+            background-color: #10b981;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: inline-block;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        .details {
+            background-color: #f8f5ff;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>Booking Confirmed!</h1>
+        <p>Your event is officially on our calendar!</p>
+    </div>
+
+    <div class="content">
+        <p>Dear <span th:text="${clientName} ?: 'Valued Client'"></span>,</p>
+
+        <p>Great news! Your booking has been confirmed and we're excited to be part of your special event.</p>
+
+        <div class="booking-id">
+            Booking Reference: <strong th:text="${uniqueId}"></strong>
+        </div>
+
+        <div class="details">
+            <p><strong>Event Details:</strong></p>
+            <p>Event Type: <span th:text="${eventType}"></span></p>
+            <p>Date: <span th:text="${eventDate}"></span></p>
+            <p>Time: <span th:text="${eventTime}"></span></p>
+            <p>Location: <span th:text="${eventLocation}"></span></p>
+            <p>Total Amount: <span th:text="${totalAmount}"></span></p>
+        </div>
+
+        <p><strong>What's Next?</strong></p>
+        <ul>
+            <li>We'll contact you before your event to finalize music preferences and event timeline</li>
+            <li>Please ensure the venue has adequate power supply and setup space</li>
+            <li>Feel free to share any special song requests or announcements in advance</li>
+        </ul>
+
+        <p>We're committed to making your event unforgettable with exceptional music and professional service.</p>
+
+        <p>Best regards,<br>
+            <strong>Jeff Jackson</strong></p>
+    </div>
+
+    <div class="footer">
+        <p>Need to make changes? Contact us at <a href="mailto:djjeffjackson@gmail.com">djjeffjackson@gmail.com</a></p>
+        <p>DJ Jeff Jackson. All rights reserved.</p>
+        <a href="https://www.jeffjacksonjr.com/"> Jeff Jackson Official Website</a>
+    </div>
+</div>
+</body>
+</html>
