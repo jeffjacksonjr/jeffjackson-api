@@ -1,6 +1,7 @@
 package com.jeffjackson.blockSchedule.controller;
 
 import com.jeffjackson.blockSchedule.model.BlockSchedule;
+import com.jeffjackson.blockSchedule.model.ScheduleAvailabilityRequest;
 import com.jeffjackson.blockSchedule.service.BlockScheduleService;
 import com.jeffjackson.model.MessageModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -60,5 +62,29 @@ public class BlockScheduleController {
     public ResponseEntity<List<BlockSchedule>> findAllBlockSchedule(){
         List<BlockSchedule> data = this.blockScheduleService.findAll();
         return ResponseEntity.status(HttpStatus.OK).body(data);
+    }
+
+    @PostMapping("/api/public/blockSchedule/check-availability")
+    public ResponseEntity<?> checkScheduleAvailability(@RequestBody ScheduleAvailabilityRequest request) {
+        try {
+            String scheduleId = request.getDate().replace("-", "") +
+                    request.getTime().replace(":", "").replace(" ", "");
+
+            Optional<BlockSchedule> blockSchedule = blockScheduleService.findById(scheduleId);
+
+            if (blockSchedule.isPresent()) {
+                BlockSchedule schedule = blockSchedule.get();
+
+                if ("user".equalsIgnoreCase(schedule.getType())) {
+                    return ResponseEntity.status(HttpStatus.CONFLICT)
+                            .body(new MessageModel("error",
+                                    "Jeff is not available on this time. Please choose a different time."));
+                }
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new MessageModel("error", "Failed to check schedule availability"));
+        }
+        return ResponseEntity.ok(new MessageModel("success", "Booking slot is available"));
     }
 }
