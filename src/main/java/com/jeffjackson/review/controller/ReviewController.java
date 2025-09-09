@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -44,9 +45,16 @@ public class ReviewController {
     }
 
     @GetMapping("/public/reviews")
-    public ResponseEntity<List<Review>> getAllReviews() {
-        List<Review> reviews = reviewService.getAllReviews();
-        return ResponseEntity.ok(reviews);
+    public ResponseEntity<List<Review>> getTopRatedReviews() {
+        List<Review> allReviews = reviewService.getAllReviews();
+
+        List<Review> filteredReviews = allReviews.stream()
+                .filter(review -> review.getRating() >= 4)
+                .sorted((r1, r2) -> r2.getUpdatedAt().compareTo(r1.getUpdatedAt()))
+                .limit(3)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(filteredReviews);
     }
 
     @GetMapping("/public/reviews/top")
