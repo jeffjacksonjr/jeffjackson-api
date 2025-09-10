@@ -86,7 +86,7 @@ public class EnquiryController {
             emailService.sendEmailFromTemplateWithCc(
                     request.getClientEmail(),
                     ccEmailList,
-                    "Discussion Request for Your Enquiry",
+                    "Discussion Request for Your Enquiry: " + request.getEnquiryId(),
                     "discussion-request",
                     templateModel
             );

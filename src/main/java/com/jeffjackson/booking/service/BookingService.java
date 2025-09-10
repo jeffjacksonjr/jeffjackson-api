@@ -62,7 +62,7 @@ public class BookingService {
         this.emailService = emailService;
     }
 
-    public Booking createBooking(BookingRequest request) {
+    public Booking createBooking(BookingRequest request) throws MessagingException {
         // Validate date format
         try {
             LocalDate.parse(request.getEventDate(), DATE_FORMATTER);
@@ -131,6 +131,9 @@ public class BookingService {
 
         // Send booking created email
         sendBookingStatusEmail(booking, "CREATED");
+
+        // Send confirmation emails to admin
+        sendConfirmationEmails(booking);
 
         // Block the schedule
         blockSchedule(booking);
@@ -209,14 +212,15 @@ public class BookingService {
         adminModel.put("createdAt", booking.getCreatedAt());
         adminModel.put("amount", booking.getAmount());
 
-        emailService.sendEmailFromTemplate(
+        emailService.sendEmailFromTemplateWithCc(
                 "djjeffjackson@gmail.com",
-                "New Booking Confirmed: " + booking.getUniqueId(),
+                ccEmailList,
+                "New Booking Received: " + booking.getUniqueId(),
                 "admin-booking-confirmation",
                 adminModel
         );
 
-        // Send email to client
+        /*// Send email to client
         Map<String, Object> clientModel = new HashMap<>();
         clientModel.put("clientName", booking.getClientName());
         clientModel.put("eventType", booking.getEventType());
@@ -230,7 +234,7 @@ public class BookingService {
                 "Your Booking Confirmation - " + booking.getUniqueId(),
                 "client-booking-confirmation",
                 clientModel
-        );
+        );*/
     }
 
     public PaginatedResponse<BookingResponse> getPaginatedBookings(int page, int size) {
@@ -422,6 +426,8 @@ public class BookingService {
                     subject = "Booking Confirmed - Reference: " + booking.getUniqueId();
                     // Add additional details for confirmed booking
                     model.put("totalAmount", "$" + booking.getTotalAmount());
+//                    model.put("totalAmountReceived", "$" + booking.getTotalAmountReceived());
+//                    model.put("remainingAmount", "$" + booking.getRemainingAmount());
                     break;
                 case "CANCELLED":
                     templateName = "booking-cancelled";
