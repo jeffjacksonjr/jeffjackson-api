@@ -8,7 +8,7 @@
         body, html {
             margin: 0;
             padding: 0;
-            font-family: 'Arial', sans-serif;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
             line-height: 1.6;
             color: #333333;
             background-color: #f7f7f7;
@@ -22,7 +22,7 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
         .email-header {
-            background: linear-gradient(135deg, #6d28d9 0%, #8b5cf6 100%);
+            background-color: #6a0dad; /* Dark Purple */
             padding: 30px 40px;
             color: white;
             text-align: center;
@@ -31,6 +31,10 @@
             margin: 0;
             font-size: 24px;
             font-weight: 500;
+        }
+        .email-header p {
+            margin: 5px 0 0;
+            color: #d8b4fe;
         }
         .email-content {
             padding: 40px;
@@ -45,8 +49,8 @@
             color: #555555;
         }
         .details-box {
-            background-color: #f8f5ff;
-            border-left: 4px solid #8b5cf6;
+            background-color: #f8f5ff; /* Light Purple */
+            border-left: 4px solid #8a2be2; /* Blue-Violet */
             padding: 20px;
             margin: 25px 0;
             border-radius: 0 4px 4px 0;
@@ -58,28 +62,28 @@
         .detail-label {
             font-weight: 600;
             width: 140px;
-            color: #6d28d9;
+            color: #4b0082; /* Indigo */
         }
         .detail-value {
             flex: 1;
         }
         .rating-stars {
-            color: #f59e0b;
+            color: #f59e0b; /* Yellow */
             font-weight: bold;
         }
         .review-content {
-            background-color: #f9fafb;
+            background-color: #faf5ff; /* Even lighter purple */
             padding: 15px;
             border-radius: 4px;
             margin: 15px 0;
-            border-left: 3px solid #e5e7eb;
+            border-left: 3px solid #e9d5ff; /* Lighter purple border */
         }
         .email-footer {
             padding: 25px 40px;
-            background-color: #f8f5ff;
-            color: #666666;
+            background-color: #f5f5f5; /* Grey */
+            color: #777777;
             font-size: 13px;
-            border-top: 1px solid #e9d5ff;
+            border-top: 1px solid #eeeeee;
         }
         .signature {
             margin-bottom: 15px;
@@ -88,15 +92,15 @@
         .reference {
             margin-top: 20px;
             padding-top: 15px;
-            border-top: 1px solid #e9d5ff;
+            border-top: 1px solid #eeeeee;
             font-size: 12px;
             color: #999999;
         }
         .action-button {
             display: inline-block;
             padding: 12px 24px;
-            background: linear-gradient(135deg, #6d28d9 0%, #8b5cf6 100%);
-            color: white;
+            background-color: #8a2be2; /* Blue-Violet */
+            color: white !important;
             text-decoration: none;
             border-radius: 4px;
             margin: 20px 0;
