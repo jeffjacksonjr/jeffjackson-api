@@ -204,13 +204,14 @@ public class BookingService {
         adminModel.put("email", booking.getEmail());
         adminModel.put("phone", booking.getPhone());
         adminModel.put("eventType", booking.getEventType());
-        adminModel.put("eventDate", booking.getEventDate().format(String.valueOf(DateTimeFormatter.ofPattern("MM-dd-yyyy"))));
+        adminModel.put("eventDate", booking.getEventDate());
         adminModel.put("eventTime", booking.getEventTime());
         adminModel.put("address", booking.getStreet() + ", " + booking.getCity() + ", " + booking.getState());
         adminModel.put("message", booking.getMessage());
         adminModel.put("bookingId", booking.getUniqueId());
         adminModel.put("createdAt", booking.getCreatedAt());
         adminModel.put("amount", booking.getAmount());
+        adminModel.put("paypalTransactionId", booking.getPaypalTransactionId());
 
         emailService.sendEmailFromTemplateWithCc(
                 "djjeffjackson@gmail.com",

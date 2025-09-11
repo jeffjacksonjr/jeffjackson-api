@@ -322,8 +322,8 @@ public class EnquiryService {
             }
 
             enquiry.setDepositReceived(deposit.toString());
-            BigDecimal remaining = totalAmount.subtract(deposit);
-            enquiry.setRemainingAmount(remaining.compareTo(BigDecimal.ZERO) > 0 ? remaining.toString() : "0");
+//            BigDecimal remaining = totalAmount.subtract(deposit);
+//            enquiry.setRemainingAmount(remaining.compareTo(BigDecimal.ZERO) > 0 ? remaining.toString() : "0");
             enquiry.setAskForDeposit(true);
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Deposit must be a valid number");
