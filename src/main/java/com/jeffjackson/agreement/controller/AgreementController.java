@@ -95,7 +95,7 @@ public class AgreementController {
                     emailService.sendEmailFromTemplateWithCc(
                             agreementRequest.getClientEmail(),
                             ccEmailList,
-                            "Agreement Document: " + enquiry.get().getUniqueId(),
+                            "Agreement Document Uploaded: " + enquiry.get().getUniqueId(),
                             "user-agreement-upload",
                             model
                     );
@@ -139,7 +139,7 @@ public class AgreementController {
                     emailService.sendEmailFromTemplateWithCc(
                             agreementRequest.getClientEmail(),
                             ccEmailList,
-                            "Agreement Document: " + booking.get().getUniqueId(),
+                            "Agreement Document Uploaded: " + booking.get().getUniqueId(),
                             "user-agreement-upload",
                             model
                     );
