@@ -115,7 +115,7 @@
         </div>
 
         <div class="message" th:if="${customMessage}">
-            <b>DJ Jeff Message: </b><p th:text="${customMessage}"></p>
+            <b>DJ Jeff Message: </b><p class="proposal-box" th:text="${customMessage}"></p>
         </div>
 
         <p class="message">Please let us know if the proposed time works for you or if you'd like to suggest an alternative.</p>
@@ -131,7 +131,7 @@
         </div>
 
         <div class="contact-info">
-            <p>Email: <span th:text="${senderEmail} ?: 'contact@example.com'"></span></p>
+            <p>For questions or assistance, contact us at <a href="mailto:djjeffjackson@gmail.com">djjeffjackson@gmail.com</a></p>
             <p>Phone: <span th:text="${senderPhone} ?: '+1 (800) 123-4567'"></span></p>
         </div>
     </div>
